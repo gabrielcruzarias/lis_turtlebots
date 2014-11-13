@@ -2,7 +2,7 @@ import socket
 from threading import Thread
 
 class SimpleClient:
-  def __init__(self, host="localhost", port=12345): #pr2mm1.csail.mit.edu
+  def __init__(self, host="pr2mm1.csail.mit.edu", port=12345):
     self.host = host
     self.port = port
     self.message_received = None

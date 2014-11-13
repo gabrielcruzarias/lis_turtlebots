@@ -1,6 +1,7 @@
 import rospy
 from SimpleServer import SimpleServer, SimpleClient
 from argparse import ArgumentParser
+import time
 
 class interface:
   START, PICKING, WAITING_TO_PLACE, PLACING= range(4)
@@ -31,6 +32,7 @@ class interface:
           
           if self.state == self.PLACING:
               self.place()
+              #time.sleep(1)
               self.send_msg_to_turtle("pr2 placed object")
               self.wait_until_msg_is("turtle left pr2")
               self.state = self.PICKING
@@ -39,6 +41,7 @@ class interface:
               rospy.loginfo("rotating")
               self.pick_up()
               self.state = self.WAITING_TO_PLACE
+              time.sleep(60)
 
   def wait_until_msg_is(self,correct_msg):
       rospy.loginfo("waiting to receive following msg from turtle: %s"\
@@ -86,7 +89,7 @@ def awesome_parse_arguments():
         init_state = 3
     return init_state
 if __name__=="__main__":
-  rospy.init_node("turtle_pr2_friends")
+  rospy.init_node("pr2_communication")
   init_state = awesome_parse_arguments()
   interface(init_state)
 

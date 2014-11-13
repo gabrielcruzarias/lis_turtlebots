@@ -109,7 +109,7 @@ def approach():
 # forward and it'll hit the object and eventually the goal)
 def face(error):
     global obj_y
-    obj_y = 1.0
+    obj_y = 10.0
     #print "STARTED FACE" ###------------------------------------------------------------------------------------------------###
     CENTER = 0.0
     w = 0.4
@@ -134,7 +134,7 @@ def face(error):
         twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
         twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
         pub.publish(twist)
-        obj_y = math.copysign(1.0, obj_y)
+        obj_y = math.copysign(10.0, obj_y)
         time.sleep(2)
     return "box_found"
 
@@ -213,7 +213,7 @@ def waitForPR2Response():
             msg = listener.get_message()
             print msg 
             if (msg == "pr2 ready to place can"):
-                print msg
+                print "PR2 ready"
                 waiting_for_pr2_response = False
             else:
                 time.sleep(1)
@@ -276,14 +276,36 @@ def goToPose(frame, position, orientation): #frame, [x, y], [z, w]
     nav.wait_for_result(rospy.Duration.from_sec(5.0))
 
 
-def sendMessage():
-    pass
+def wait_until_msg_is(correct_msg):
+    rospy.loginfo("waiting to receive following msg from turtle: %s"\
+    % correct_msg)
+    msg = receive_msg_from_pr2()
+    print "msg = ", msg
+    while msg != correct_msg:
+        msg = receive_msg_from_pr2()
+        print "msg = ", msg
+              
+def send_msg_to_pr2(msg):
+    rospy.loginfo( "sending message: %s " % msg)
+    sender.broadcast(msg)
+    rospy.loginfo( "message sent: %s " % msg)
+  
+def receive_msg_from_pr2():
+    msg_received = False
+    while not msg_received:
+        try:
+            msg = listener.get_message()
+            msg_received = True
+            rospy.loginfo("message received is: %s " % msg)
+        except:
+            rospy.sleep(2)
+    return msg
 
 
 
 
-obj_x = 1.0
-obj_y = 1.0
+obj_x = 10.0
+obj_y = 10.0
 obj_theta = 0.0
 
 robotPos = [0, 0, 0]
@@ -298,7 +320,7 @@ if __name__ == "__main__":
     nav = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 
     #print "WAITING FOR SERVER..." ###---------------------------------------------------------------------------------------###
-    #nav.wait_for_server()
+    nav.wait_for_server()
     #print "DONE WAITING FOR SERVER" ###-------------------------------------------------------------------------------------###
 
     goal = MoveBaseGoal()
@@ -317,28 +339,47 @@ if __name__ == "__main__":
     #        break
     #    except:
     #        time.sleep(1)
-
+    i = 0
+    print "Starting..."
     while (True):
-        #goToKitchen()
-        raw_input("Hit enter to go to kitchen")
+        goToKitchen()
+
+        # This only happens if it's not the first time we go through the loop
+        # Once we get away from the PR2, we want to tell it we left so that it can turn and grab another drink
         if (leave):
-            sender.broadcast("turtle left pr2")
-        print "Waiting for PR2's message"
-        waitForPR2Response()
+            send_msg_to_pr2("turtle left pr2")
+            time.sleep(20)
+            obj_x = 10.0
+            obj_y = 10.0
         
-        raw_input("Hit enter to go to PR2")
+        # Wait until we see an AR tag to start listening to the PR2
+        print "Waiting to see PR2's AR tag"        
+        while (obj_x == 10.0):
+            time.sleep(1)
+
+        # Wait until the PR2 tells us that it is ready to place the drink
+        print "Waiting for PR2's READY message"
+        wait_until_msg_is("pr2 ready to place can")
         
-        #approach()        
-        sender.broadcast("turtle in place position")
+        # Approach the PR2 so that it can place the drink on the turtlebot
+        approach()
+
+        # Once we're in the placement position, tell the PR2 that it can place the drink on the turtlebot
+        send_msg_to_pr2("turtle in place position")
+
+        # Wait for the PR2 to place the drink on the turtlebot        
         print "Waiting for drink"
-        waitForDrink()
+        time.sleep(10)
+        print "Waiting for PR2's DONE message"
+        wait_until_msg_is("pr2 placed object")
         
-        raw_input("Click enter to leave PR2")
 
         leave = True
-        print "DONE!"
+        print "DONE!", i
+        i += 1
         waiting_for_pr2_response = True
         waiting_for_drink = True
+        
         #raw_input("Click enter to start")
         #goToPR2()
         #approach()

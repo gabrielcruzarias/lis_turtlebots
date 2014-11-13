@@ -1,12 +1,13 @@
 import rospy
 from SimpleServer import SimpleServer, SimpleClient
 from argparse import ArgumentParser
+import time
 
 class interface:
   START, PICKING, WAITING_TO_PLACE, PLACING= range(4)
   def __init__(self, init_state=None, debug=False):
       self.server  = SimpleServer(12345)
-      self.client = SimpleClient(host="10.68.0.171",port=12346)
+      self.client = SimpleClient(host="localhost",port=12346) #10.68.0.171
       
       if init_state == None:
           self.state = self.START
@@ -31,6 +32,7 @@ class interface:
           
           if self.state == self.PLACING:
               self.place()
+              #time.sleep(1)
               self.send_msg_to_turtle("pr2 placed object")
               self.wait_until_msg_is("turtle left pr2")
               self.state = self.PICKING
@@ -39,6 +41,7 @@ class interface:
               rospy.loginfo("rotating")
               self.pick_up()
               self.state = self.WAITING_TO_PLACE
+              time.sleep(60)
 
   def wait_until_msg_is(self,correct_msg):
       rospy.loginfo("waiting to receive following msg from turtle: %s"\
