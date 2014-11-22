@@ -32,9 +32,8 @@ class interface:
           
           if self.state == self.PLACING:
               self.place()
-              #time.sleep(1)
               self.send_msg_to_turtle("pr2 placed object")
-              self.wait_until_msg_is("turtle left pr2")
+              #self.wait_until_msg_is("turtle left pr2")
               self.state = self.PICKING
 
           if self.state == self.PICKING:

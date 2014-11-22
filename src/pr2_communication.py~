@@ -89,7 +89,7 @@ def awesome_parse_arguments():
         init_state = 3
     return init_state
 if __name__=="__main__":
-  rospy.init_node("turtle_pr2_friends")
+  rospy.init_node("pr2_communication")
   init_state = awesome_parse_arguments()
   interface(init_state)
 

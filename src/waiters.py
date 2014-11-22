@@ -346,12 +346,14 @@ if __name__ == "__main__":
 
         # This only happens if it's not the first time we go through the loop
         # Once we get away from the PR2, we want to tell it we left so that it can turn and grab another drink
+        
         if (leave):
-            send_msg_to_pr2("turtle left pr2")
-            time.sleep(20)
+            #send_msg_to_pr2("turtle left pr2")
+            time.sleep(5)
             obj_x = 10.0
             obj_y = 10.0
         
+
         # Wait until we see an AR tag to start listening to the PR2
         print "Waiting to see PR2's AR tag"        
         while (obj_x == 10.0):

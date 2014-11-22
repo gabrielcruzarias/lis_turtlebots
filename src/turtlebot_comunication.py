@@ -36,7 +36,7 @@ class interface:
           if self.state == self.WAITING_FOR_DRINK:
               self.wait_until_msg_is("pr2 placed object")
               time.sleep(1)
-              self.send_msg_to_pr2("turtle left pr2")
+              #self.send_msg_to_pr2("turtle left pr2")
               self.state = self.GOING_TO_KITCHEN
 
   def wait_until_msg_is(self,correct_msg):
