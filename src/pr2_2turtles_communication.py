@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import rospy
 from SimpleServer import SimpleServer, SimpleClient
 from argparse import ArgumentParser

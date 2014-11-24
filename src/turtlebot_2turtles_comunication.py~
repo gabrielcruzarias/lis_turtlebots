@@ -1,7 +1,11 @@
+#!/usr/bin/env python
+
 import rospy
 from SimpleServer import SimpleServer, SimpleClient
 from argparse import ArgumentParser
 import time
+from waiters import *
+from basic_turtlebot import *
 
 class interface:
   GOING_TO_KITCHEN, WAITING_FOR_PR2, APPROACHING_PR2, WAITING_FOR_DRINK= range(4)
@@ -21,12 +25,14 @@ class interface:
       self.event_loop()
       
   def event_loop(self):
+      raw_input("Hit enter to start...")
       while True:
           rospy.loginfo("starting event loop!  current state = %d" % self.state)
 
           if self.state == self.GOING_TO_KITCHEN:
               raw_input("Hit enter to go to the kitchen...")
               self.go_to_kitchen()
+              #goToKitchen()
               self.state = self.WAITING_FOR_PR2
           
           if self.state == self.WAITING_FOR_PR2:
@@ -36,14 +42,16 @@ class interface:
               self.state = self.APPROACHING_PR2
           
           if self.state == self.APPROACHING_PR2:
-              #raw_input("Hit enter to approach the PR2...")
+              raw_input("Hit enter to approach the PR2...")
               self.approach()
+              #approach()
               self.send_msg_to_pr2("turtle in place position")
               self.state = self.WAITING_FOR_DRINK
 
           if self.state == self.WAITING_FOR_DRINK:
               self.wait_until_msg_is("pr2 placed object")
-              time.sleep(1)
+              #time.sleep(1)
+              move(0.5, 0.25)
               self.send_msg_to_pr2("turtle left pr2")
               self.state = self.GOING_TO_KITCHEN
 
@@ -93,7 +101,7 @@ def awesome_parse_arguments():
         init_state = 3
     return init_state
 if __name__=="__main__":
-  rospy.init_node("turtlebot_communication")
+  rospy.init_node("turtlebot_2turtles_communication")
   init_state = awesome_parse_arguments()
   name = raw_input("Enter turtlebot's name: ")
   interface(name, init_state)
