@@ -31,18 +31,14 @@ class interface:
               self.state = self.WAITING_TO_PLACE
           
           if self.state == self.WAITING_TO_PLACE:
-              #raw_input("Hit enter to tell the turtlebots that the PR2 is ready...")
-              #self.send_msg_to_turtle("pr2 ready to place can")
               self.send_msg_to_turtle("pr2 ready to place can")
               self.wait_until_msg_is("can i come")
-              #raw_input("Hit enter to choose which turtlebot will come...")
               self.send_msg_to_turtle("come " + self.turtle_being_attended)
               rospy.loginfo("Waiting for " + self.turtle_being_attended)
               self.wait_until_msg_is("turtle in place position", self.turtle_being_attended)
               self.state = self.PLACING
           
           if self.state == self.PLACING:
-              #raw_input("Hit enter to place...")
               self.send_msg_to_turtle("placing")
               self.place()
               self.send_msg_to_turtle("pr2 placed object")
@@ -50,12 +46,10 @@ class interface:
               self.state = self.PICKING
 
           if self.state == self.PICKING:
-              #raw_input("Hit enter to start...")
               self.send_msg_to_turtle("picking")
               self.pick_up()
               self.state = self.WAITING_TO_PLACE
-              #time.sleep(60)
-
+              
   def wait_until_msg_is(self,correct_msg, name="turtle"):
       rospy.loginfo("waiting to receive following msg from turtle: %s"\
       % correct_msg)
@@ -107,24 +101,16 @@ class interface:
               msg_received = True
               if (random.randint(0, 1) == 0):
                   msg = msgD
-                  if (self.turtle_being_attended != "donatello"):
-                      print "TURTLE changing from ", self.turtle_being_attended, " to donatello"
                   self.turtle_being_attended = "donatello"
               else:
                   msg = msgL
-                  if (self.turtle_being_attended != "leonardo"):
-                      print "TURTLE changing from ", self.turtle_being_attended, " to leonardo"
                   self.turtle_being_attended = "leonardo"
           elif (msgD != None):
               msg = msgD
-              if (self.turtle_being_attended != "donatello"):
-                  print "TURTLE changing from ", self.turtle_being_attended, " to donatello"
               self.turtle_being_attended = "donatello"
               msg_received = True
           elif (msgL != None):
               msg = msgL
-              if (self.turtle_being_attended != "leonardo"):
-                  print "TURTLE changing from ", self.turtle_being_attended, " to leonardo"
               self.turtle_being_attended = "leonardo"
               msg_received = True
           else:

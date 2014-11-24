@@ -33,17 +33,17 @@ class interface:
           if self.state == self.WAITING_TO_PLACE:
               #raw_input("Hit enter to tell the turtlebots that the PR2 is ready...")
               #self.send_msg_to_turtle("pr2 ready to place can")
-              self.server.update_broadcast("pr2 ready to place can")
+              self.send_msg_to_turtle("pr2 ready to place can")
               self.wait_until_msg_is("can i come")
               #raw_input("Hit enter to choose which turtlebot will come...")
-              self.server.update_broadcast("come " + self.turtle_being_attended)
+              self.send_msg_to_turtle("come " + self.turtle_being_attended)
               rospy.loginfo("Waiting for " + self.turtle_being_attended)
               self.wait_until_msg_is("turtle in place position", self.turtle_being_attended)
               self.state = self.PLACING
           
           if self.state == self.PLACING:
               #raw_input("Hit enter to place...")
-              self.server.update_broadcast("placing")
+              self.send_msg_to_turtle("placing")
               self.place()
               self.send_msg_to_turtle("pr2 placed object")
               self.wait_until_msg_is("turtle left pr2", self.turtle_being_attended)
@@ -51,7 +51,7 @@ class interface:
 
           if self.state == self.PICKING:
               #raw_input("Hit enter to start...")
-              self.server.update_broadcast("picking")
+              self.send_msg_to_turtle("picking")
               self.pick_up()
               self.state = self.WAITING_TO_PLACE
               #time.sleep(60)
