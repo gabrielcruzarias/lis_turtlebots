@@ -2,10 +2,10 @@ import socket
 from threading import Thread
 
 class SimpleClient:
-  def __init__(self, host="pr2mm1.csail.mit.edu", port=12345):
+  def __init__(self, host="localhost", port=12345): #pr2mm1.csail.mit.edu
     self.host = host
     self.port = port
-    self.message_received = None
+    self.message_received = "NONE"
 
   def get_message(self):
     self.s = socket.socket()         # Create a socket object
@@ -16,7 +16,7 @@ class SimpleClient:
   
   
 class SimpleServer:
-  def __init__(self, port=12346, threading=False):
+  def __init__(self, port=12346, threading=True):
     self.s = socket.socket()
     self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
     self.s.bind(("", port))
@@ -37,7 +37,7 @@ class SimpleServer:
       c, addr = self.s.accept()
       c.send(self.msg)
       c.close()
-      print "send!"
+      #print "send!"
     print "done send"
   
   def broadcast(self, msg):
@@ -51,11 +51,11 @@ if __name__=="__main__":
   if server_type == "B":
     broadcaster = SimpleServer()
     for i in range(5):
-      msg = raw_input("Enter text you want to broadcast: ")
-      broadcaster.broadcast(msg)
-      #broadcaster.broadcast("hello! %d " % i)
-      #broadcaster.msg = "Broadcasting message now  %d " % i
-    #broadcaster.stop_broadcast = True
+      #msg = raw_input("Enter text you want to broadcast: ")
+      #broadcaster.broadcast(msg)
+      broadcaster.broadcast("hello! %d " % i)
+      broadcaster.msg = "Broadcasting message now  %d " % i
+    broadcaster.stop_broadcast = True
   else:
     listener = SimpleClient()
     while True:

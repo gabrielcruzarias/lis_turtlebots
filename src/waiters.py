@@ -85,7 +85,7 @@ def getPR2Location():
 def approach():
     distance = math.sqrt(obj_x**2 + obj_y**2)
     t = time.time()
-    while (distance > 0.5):
+    while (distance > 0.4):
         if (abs(obj_y) > 0.25):
             face(0.1)
             t = time.time()
@@ -100,6 +100,8 @@ def approach():
     twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
     twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
     pub.publish(twist)
+    time.sleep(0.5)
+    turn(math.pi)
 
 
 
@@ -138,6 +140,19 @@ def face(error):
         time.sleep(2)
     return "box_found"
 
+
+# Turns the turtlebot alpha radians
+def turn(alpha):
+    ERROR_TIME = 0.0 # This is needed because it'll take some time for the robot to accelerate. The ideal time will be determined experimentally (it might depend on alpha).
+    w = 0.75
+    t = time.time()
+    while (time.time() - t < abs(alpha) / w + ERROR_TIME):
+        twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
+        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = math.copysign(w, alpha)
+        pub.publish(twist)
+    twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
+    twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+    pub.publish(twist)
 
 
 # Gets the yaw angle from the quaternion describing the object's position
@@ -347,11 +362,11 @@ if __name__ == "__main__":
         # This only happens if it's not the first time we go through the loop
         # Once we get away from the PR2, we want to tell it we left so that it can turn and grab another drink
         
-        if (leave):
+        #if (leave):
             #send_msg_to_pr2("turtle left pr2")
-            time.sleep(5)
-            obj_x = 10.0
-            obj_y = 10.0
+            #time.sleep(5)
+            #obj_x = 10.0
+            #obj_y = 10.0
         
 
         # Wait until we see an AR tag to start listening to the PR2
@@ -375,12 +390,23 @@ if __name__ == "__main__":
         print "Waiting for PR2's DONE message"
         wait_until_msg_is("pr2 placed object")
         
+        t = time.time()
+        while ((time.time() - t) < 3):
+            twist.linear.x = 0.25; twist.linear.y = 0; twist.linear.z = 0
+            twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+            pub.publish(twist)
+        twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
+        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+        pub.publish(twist)
+        send_msg_to_pr2("turtle left pr2")
 
-        leave = True
+        #leave = True
         print "DONE!", i
         i += 1
         waiting_for_pr2_response = True
         waiting_for_drink = True
+        obj_x = 10.0
+        obj_y = 10.0
         
         #raw_input("Click enter to start")
         #goToPR2()
