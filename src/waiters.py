@@ -13,7 +13,8 @@ from ar_track_alvar.msg import AlvarMarkers
 from geometry_msgs.msg import PoseWithCovarianceStamped
 import actionlib
 import math
-
+#from turtlebot_2turtles_communication import *
+from basic_turtlebot import *
 
 
 NAME = "DONATELLO"
@@ -24,8 +25,8 @@ OFFICE1_ORIENTATION = {"DONATELLO" : (0, 1), "LEONARDO" : (0, 1)}
 OFFICE2_POSITION = {"DONATELLO" : (0, 0), "LEONARDO" : (0, 0)}
 OFFICE2_ORIENTATION = {"DONATELLO" : (0, 1), "LEONARDO" : (0, 1)}
 
-KITCHEN_POSITION = {"DONATELLO" : (1.79, -0.57), "LEONARDO" : (0, 0)}
-KITCHEN_ORIENTATION = {"DONATELLO" : (0.9, 0.44), "LEONARDO" : (0, 1)}
+KITCHEN_POSITION = {"DONATELLO" : (1.79, -0.57), "LEONARDO" : (1.25, -1.03)}
+KITCHEN_ORIENTATION = {"DONATELLO" : (0.9, 0.44), "LEONARDO" : (0.78, 0.63)}
 
 PR2_POSITION = {"DONATELLO" : (0.83, 0.44), "LEONARDO" : (0, 0)}
 PR2_ORIENTATION = {"DONATELLO" : (-0.63, 0.77), "LEONARDO" : (0, 1)}
@@ -317,6 +318,110 @@ def receive_msg_from_pr2():
     return msg
 
 
+############################################################
+
+class interface:
+  GOING_TO_KITCHEN, WAITING_FOR_PR2, APPROACHING_PR2, WAITING_FOR_DRINK= range(4)
+  def __init__(self, name, init_state=None, debug=False):
+      self.name = name
+      if (name == "donatello"):
+      	  self.server = SimpleServer(12346)
+      else:
+          self.server = SimpleServer(12347)
+      self.client = SimpleClient(host="pr2mm1.csail.mit.edu",port=12345) #10.68.0.171 #pr2mm1.csail.mit.edu
+      
+      if init_state == None:
+          self.state = self.START
+      else: 
+          self.state = init_state
+
+      self.event_loop()
+      
+  def event_loop(self):
+      raw_input("Hit enter to start...")
+      while True:
+          rospy.loginfo("starting event loop!  current state = %d" % self.state)
+
+          if self.state == self.GOING_TO_KITCHEN:
+              #raw_input("Hit enter to go to the kitchen...")
+              self.go_to_kitchen()
+              goToKitchen()
+              self.state = self.WAITING_FOR_PR2
+          
+          if self.state == self.WAITING_FOR_PR2:
+              self.wait_until_msg_is("pr2 ready to place can")
+              self.send_msg_to_pr2("can i come")
+              self.wait_until_msg_is("come " + self.name)
+              self.state = self.APPROACHING_PR2
+          
+          if self.state == self.APPROACHING_PR2:
+              raw_input("Hit enter to approach the PR2...")
+              #self.approach()
+              approach()
+              self.send_msg_to_pr2("turtle in place position")
+              self.state = self.WAITING_FOR_DRINK
+
+          if self.state == self.WAITING_FOR_DRINK:
+              self.wait_until_msg_is("pr2 placed object")
+              time.sleep(1)
+              move(0.5, 0.25)
+              #raw_input("Hit enter to leave the PR2...")
+              self.send_msg_to_pr2("turtle left pr2")
+              self.state = self.GOING_TO_KITCHEN
+
+  def wait_until_msg_is(self,correct_msg):
+      rospy.loginfo("waiting to receive following msg from PR2: %s"\
+      % correct_msg)
+      msg = self.receive_msg_from_pr2()
+      while msg != correct_msg:
+          msg = self.receive_msg_from_pr2()
+              
+  def send_msg_to_pr2(self, msg):
+      rospy.loginfo( "sending message: %s " % msg)
+      self.server.update_broadcast(self.name + "," + msg)
+      rospy.loginfo( "message sent: %s " % msg)
+  
+  def receive_msg_from_pr2(self):
+      msg_received = False
+      while not msg_received:
+          try:
+              msg = self.client.get_message()
+              msg_received = True
+              #rospy.loginfo("message received is: %s " % msg)
+          except:
+              rospy.sleep(1)
+      return msg
+
+  def go_to_kitchen(self):
+      rospy.loginfo("going to kitchen")
+      rospy.sleep(1) # dummy action 
+
+  def approach(self):
+      rospy.loginfo("approaching PR2")
+      rospy.sleep(1) # dummy action
+
+def awesome_parse_arguments():
+    parser = ArgumentParser("Select initial state")
+    parser.add_argument("--waiting", action="store_true",
+        help="wait for msg then approach PR2")
+    parser.add_argument("--ready", action="store_true",
+        help="in place position")
+
+    args = parser.parse_args()
+    init_state = 0
+    if args.waiting:
+        init_state=  1
+    if args.ready:
+        init_state = 3
+    return init_state
+
+
+
+
+############################################################
+
+
+
 
 
 obj_x = 10.0
@@ -326,7 +431,8 @@ obj_theta = 0.0
 robotPos = [0, 0, 0]
 
 leave = False
-
+goal = MoveBaseGoal
+twist = Twist()
 
 if __name__ == "__main__":
     rospy.init_node("waiter")
@@ -345,8 +451,8 @@ if __name__ == "__main__":
     rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, mapLocation)
     rospy.Subscriber('/move_base/result', MoveBaseActionResult, goalResult)
     
-    listener = SimpleClient()
-    sender = SimpleServer()
+    #listener = SimpleClient()
+    #sender = SimpleServer()
 
     #while (True):
     #    try:
@@ -356,6 +462,11 @@ if __name__ == "__main__":
     #        time.sleep(1)
     i = 0
     print "Starting..."
+    
+    name = raw_input("Enter turtlebot's name: ")
+    interface(name, 0)
+
+"""
     while (True):
         goToKitchen()
 
@@ -407,15 +518,8 @@ if __name__ == "__main__":
         waiting_for_drink = True
         obj_x = 10.0
         obj_y = 10.0
-        
-        #raw_input("Click enter to start")
-        #goToPR2()
-        #approach()
-        #print "Success!!"
-        #time.sleep(7)
-        #waitForDrink()
 
-
+"""
 
 
 

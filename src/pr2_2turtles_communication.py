@@ -88,6 +88,8 @@ class interface:
   def receive_msg_from_turtle(self):
       msg_received = False
       msg = None
+      msgD = None
+      msgL = None
       while not msg_received:
           try:
               msgD = self.clientD.get_message()

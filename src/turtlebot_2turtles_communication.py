@@ -15,7 +15,7 @@ class interface:
       	  self.server = SimpleServer(12346)
       else:
           self.server = SimpleServer(12347)
-      self.client = SimpleClient(host="localhost",port=12345) #10.68.0.171 #pr2mm1.csail.mit.edu
+      self.client = SimpleClient(host="pr2mm1.csail.mit.edu",port=12345) #10.68.0.171 #pr2mm1.csail.mit.edu
       
       if init_state == None:
           self.state = self.START
@@ -30,9 +30,9 @@ class interface:
           rospy.loginfo("starting event loop!  current state = %d" % self.state)
 
           if self.state == self.GOING_TO_KITCHEN:
-              raw_input("Hit enter to go to the kitchen...")
+              #raw_input("Hit enter to go to the kitchen...")
               self.go_to_kitchen()
-              #goToKitchen()
+              goToKitchen()
               self.state = self.WAITING_FOR_PR2
           
           if self.state == self.WAITING_FOR_PR2:
@@ -43,16 +43,16 @@ class interface:
           
           if self.state == self.APPROACHING_PR2:
               raw_input("Hit enter to approach the PR2...")
-              self.approach()
-              #approach()
+              #self.approach()
+              approach()
               self.send_msg_to_pr2("turtle in place position")
               self.state = self.WAITING_FOR_DRINK
 
           if self.state == self.WAITING_FOR_DRINK:
               self.wait_until_msg_is("pr2 placed object")
-              #time.sleep(1)
-              #move(0.5, 0.25)
-              raw_input("Hit enter to leave the PR2...")
+              time.sleep(1)
+              move(0.5, 0.25)
+              #raw_input("Hit enter to leave the PR2...")
               self.send_msg_to_pr2("turtle left pr2")
               self.state = self.GOING_TO_KITCHEN
 

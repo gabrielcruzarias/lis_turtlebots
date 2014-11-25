@@ -2,7 +2,7 @@ import socket
 from threading import Thread
 
 class SimpleClient:
-  def __init__(self, host="pr2mm1.csail.mit.edu", port=12345):
+  def __init__(self, host="pr2mm1.csail.mit.edu", port=12345): #pr2mm1.csail.mit.edu
     self.host = host
     self.port = port
     self.message_received = "NONE"
@@ -30,6 +30,7 @@ class SimpleServer:
       self.t.start()
 
   def update_broadcast(self, msg):
+    print "UPDATING msg from", self.msg, "to", msg
     self.msg = msg
 
   def threaded_broadcast(self):
