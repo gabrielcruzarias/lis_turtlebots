@@ -156,6 +156,17 @@ def turn(alpha):
     pub.publish(twist)
 
 
+def move(distance, velocity):
+    t = time.time()
+    while (time.time() - t < distance / float(velocity)):
+        twist.linear.x = velocity; twist.linear.y = 0; twist.linear.z = 0
+        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+        pub.publish(twist)
+    twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
+    twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+    pub.publish(twist)
+
+
 # Gets the yaw angle from the quaternion describing the object's position
 def getTheta(w, z):
     mag = math.sqrt(w ** 2 + z ** 2)
@@ -318,49 +329,7 @@ def receive_msg_from_pr2():
     return msg
 
 
-
-
-obj_x = 10.0
-obj_y = 10.0
-obj_theta = 0.0
-
-robotPos = [0, 0, 0]
-
-leave = False
-goal = MoveBaseGoal
-twist = Twist()
-
-if __name__ == "__main__":
-    rospy.init_node("waiter")
-    
-    pub = rospy.Publisher('~cmd_vel', Twist)
-    nav = actionlib.SimpleActionClient("move_base", MoveBaseAction)
-
-    #print "WAITING FOR SERVER..." ###---------------------------------------------------------------------------------------###
-    nav.wait_for_server()
-    #print "DONE WAITING FOR SERVER" ###-------------------------------------------------------------------------------------###
-
-    goal = MoveBaseGoal()
-    twist = Twist()
-
-    rospy.Subscriber('/ar_pose_marker', AlvarMarkers, objectPose)
-    rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, mapLocation)
-    rospy.Subscriber('/move_base/result', MoveBaseActionResult, goalResult)
-    
-    #listener = SimpleClient()
-    #sender = SimpleServer()
-
-    #while (True):
-    #    try:
-    #        listener.get_message()
-    #        break
-    #    except:
-    #        time.sleep(1)
-    i = 0
-    print "Starting..."
-    
-    name = raw_input("Enter turtlebot's name: ")
-    interface(name, 0)
+############################################################
 
 class interface:
   GOING_TO_KITCHEN, WAITING_FOR_PR2, APPROACHING_PR2, WAITING_FOR_DRINK= range(4)
@@ -456,6 +425,57 @@ def awesome_parse_arguments():
     if args.ready:
         init_state = 3
     return init_state
+
+
+
+
+############################################################
+
+
+
+
+
+obj_x = 10.0
+obj_y = 10.0
+obj_theta = 0.0
+
+robotPos = [0, 0, 0]
+
+leave = False
+goal = MoveBaseGoal
+twist = Twist()
+
+if __name__ == "__main__":
+    rospy.init_node("waiter")
+    
+    pub = rospy.Publisher('~cmd_vel', Twist)
+    nav = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+
+    #print "WAITING FOR SERVER..." ###---------------------------------------------------------------------------------------###
+    nav.wait_for_server()
+    #print "DONE WAITING FOR SERVER" ###-------------------------------------------------------------------------------------###
+
+    goal = MoveBaseGoal()
+    twist = Twist()
+
+    rospy.Subscriber('/ar_pose_marker', AlvarMarkers, objectPose)
+    rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, mapLocation)
+    rospy.Subscriber('/move_base/result', MoveBaseActionResult, goalResult)
+    
+    #listener = SimpleClient()
+    #sender = SimpleServer()
+
+    #while (True):
+    #    try:
+    #        listener.get_message()
+    #        break
+    #    except:
+    #        time.sleep(1)
+    i = 0
+    print "Starting..."
+    
+    name = raw_input("Enter turtlebot's name: ")
+    interface(name, 0)
 
 """
     while (True):

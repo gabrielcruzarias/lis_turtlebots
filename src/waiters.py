@@ -102,7 +102,7 @@ def approach():
     twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
     pub.publish(twist)
     time.sleep(0.5)
-    turn(2 * math.pi)
+    turn(1.5 * math.pi)
 
 
 
@@ -150,6 +150,17 @@ def turn(alpha):
     while (time.time() - t < abs(alpha) / w + ERROR_TIME):
         twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
         twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = math.copysign(w, alpha)
+        pub.publish(twist)
+    twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
+    twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+    pub.publish(twist)
+
+
+def move(distance, velocity):
+    t = time.time()
+    while (time.time() - t < distance / float(velocity)):
+        twist.linear.x = velocity; twist.linear.y = 0; twist.linear.z = 0
+        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
         pub.publish(twist)
     twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
     twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
