@@ -336,7 +336,15 @@ class interface:
   def __init__(self, name, init_state=None, debug=False):
       self.name = name
       if (name == "donatello"):
-      	  self.server = SimpleServer(12346)
+      	  self.sedef move(distance, velocity):
+    t = time.time()
+    while (time.time() - t < distance / float(velocity)):
+        twist.linear.x = velocity; twist.linear.y = 0; twist.linear.z = 0
+        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+        pub.publish(twist)
+    twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
+    twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+    pub.publish(twist)rver = SimpleServer(12346)
       else:
           self.server = SimpleServer(12347)
       self.client = SimpleClient(host="pr2mm1.csail.mit.edu",port=12345) #10.68.0.171 #pr2mm1.csail.mit.edu
@@ -366,7 +374,7 @@ class interface:
               self.state = self.APPROACHING_PR2
           
           if self.state == self.APPROACHING_PR2:
-              raw_input("Hit enter to approach the PR2...")
+              #raw_input("Hit enter to approach the PR2...")
               #self.approach()
               approach()
               self.send_msg_to_pr2("turtle in place position")
@@ -474,8 +482,8 @@ if __name__ == "__main__":
     i = 0
     print "Starting..."
     
-    name = raw_input("Enter turtlebot's name: ")
-    interface(name, 0)
+    #name = raw_input("Enter turtlebot's name: ")
+    interface(NAME.lower(), 0)
 
 """
     while (True):
