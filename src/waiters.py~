@@ -482,8 +482,8 @@ if __name__ == "__main__":
     i = 0
     print "Starting..."
     
-    name = raw_input("Enter turtlebot's name: ")
-    interface(name, 0)
+    #name = raw_input("Enter turtlebot's name: ")
+    interface(NAME.lower(), 0)
 
 """
     while (True):
