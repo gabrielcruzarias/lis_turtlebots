@@ -14,7 +14,7 @@ class Turtlebot(object):
     def __init__(self, default_velocity = 0.3, default_angular_velocity = 0.75):
         self.default_velocity = default_velocity
         self.default_angular_velocity = default_angular_velocity
-        self.pub = rospy.Publisher('~cmd_vel', Twist)
+        self.pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist)
         self.twist = Twist()
 
     def move(self, distance, velocity = None):
@@ -34,7 +34,7 @@ class Turtlebot(object):
         if (angular_velocity == None):
             angular_velocity = self.default_angular_velocity
         t = time.time()
-        while (time.time() - t < abs(angle) / angular_velocity):
+        while (time.time() - t < 2 * (angle / angular_velocity)):
             self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
             self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = math.copysign(angular_velocity, angle)
             self.pub.publish(self.twist)
@@ -53,7 +53,36 @@ class Turtlebot(object):
 if __name__=="__main__":
     rospy.init_node('basic_turtlebot')
 
+    turtlebot = Turtlebot()
+
     while (True):
-        distance = float(raw_input("Enter distance: "))
-        velocity = float(raw_input("Enter velocity: "))
-        move(distance, velocity)
+        command = raw_input("Enter command: ")
+        if (command == "move"):
+            distance = float(raw_input("Enter distance: "))
+            velocity = raw_input("Enter velocity: ")
+            if (velocity == ""):
+                turtlebot.move(distance)
+            else:
+                turtlebot.move(distance, float(velocity))
+        elif (command == "turn"):
+            angle = float(raw_input("Enter angle: "))
+            angular_velocity = raw_input("Enter angular velocity: ")
+            if (angular_velocity == ""):
+                turtlebot.turn(angle)
+            else:
+                turtlebot.turn(angle, float(angular_velocity))
+        elif (command == "stop"):
+            stop_time = raw_input("Enter stop time: ")
+            if (stop_time == ""):
+                turtlebot.stop()
+            else:
+                turtlebot.stop(float(stop_time))
+        elif (command == "show_variables"):
+            print "Default velocity =", turtlebot.default_velocity
+            print "Default angular velocity =", turtlebot.default_angular_velocity
+        elif (command == "end"):
+            break
+
+
+
+
