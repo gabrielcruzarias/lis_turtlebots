@@ -4,98 +4,77 @@ from threading import Thread
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from SimpleServer import SimpleServer, SimpleClient
 from navigator import *
+from point import *
+from orientation import *
+import time
 
 class MultiNavigator(Navigator):
-    ports = {"donatello" : 12348, "leonardo" : 12349}
-    hosts = {"donatello" : "10.68.0.171", "leonardo" : "10.68.0.175"}
-    DISTANCE_TOLERANCE = 1.0
-    def __init__(self, name, other_turtlebots, default_velocity = 0.3, default_angular_velocity = 0.75):
-        Navigator.__init__(self, default_velocity, default_angular_velocity)
+    request_ports = {"donatello" : 12348, "leonardo" : 12349}
+    response_ports = {"donatello" : 12350, "leonardo" : 12351}
+    waypoints_host = "localhost" #"10.68.0.171"
+    DISTANCE_TOLERANCE = 0.5 # When the robot is within this distance of a waypoint, we publish a new goal (to make the path smoother)
+    
+    def __init__(self, name, default_velocity = 0.3, default_angular_velocity = 0.75):
+        #Navigator.__init__(self, default_velocity, default_angular_velocity)
         self.name = name
         self.position = Point(0, 0)
         self.angle = 0
         
-        # Subscribe to /amcl_pose topic and broadcast it to the other turtlebots (via SimpleServer)
-        self.pose_publisher = SimpleServer(port = self.ports[name], threading = True)
+        # Create request server and response clients to communicate with waypoints_server
+        self.waypoint_request = SimpleServer(port = self.request_ports[name], threading = False)
+        self.waypoint_response = SimpleClient(host = self.waypoints_host, port = self.response_ports[name])
+        
+        # Subscribe to /amcl_pose topic to use to cancel the waypoints goals when the robot is close enough to avoid
+        # spending time getting the orientation and position perfectly (we only care about passing close to the waypoint)
         rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, self.publishPose)
         
-        # Create listeners for other turtlebot's pose
-        self.pose_listener = {}
-        for turtlebot in other_turtlebots:
-            self.pose_listener[turtlebot] = SimpleClient(host = self.hosts[name], port = self.ports[name])
-        self.t = Thread(target = self.listenToPose)
-        self.t.start()
-
+    def wayposeNavigation(self, wayposes):
+        for (point, orientation) in wayposes[:-1]:
+            self.reserveWaypoint(point)
+            self.publishGoal(point, orientation)
+            #raw_input("Go to " + str(point) + "...")
+            self.waitUntilCloseToGoal(point)
+            self.releaseWaypoint(point)
+        self.goToPose(wayposes[-1][0], wayposes[-1][1])
+        
+    def reserveWaypoint(self, point):
+        #print "Reserving waypoint " + str(point)
+        self.waypoint_request.broadcast("reserve," + str(point.x) + "," + str(point.y))
+        #print "Waypoint server received reservation request"
+        # The waypoints_server is only going to send an accept response. If the waypoint requested is already reserved, the server will wait until it's released to send a response.
+        self.waypoint_response.get_message()
+        #print "Granted waypoint " + str(point)
+        
+    def releaseWaypoint(self, point):
+        #print "Releasing waypoint " + str(point)
+        self.waypoint_request.broadcast("release," + str(point.x) + "," + str(point.y))
+        #print "Waypoint server received release request"
+    
+    def waitUntilCloseToGoal(point):
+        while (self.position.distance(point) > self.DISTANCE_TOLERANCE):
+            time.sleep(0.3) #sleep for a little
+    
     def publishPose(self, PoseWithCovarianceStamped):
         position = PoseWithCovarianceStamped.pose.pose.position
         (x, y) = (position.x, position.y)
-        angle = getTheta(PoseWithCovarianceStamped.pose.pose.orientation.w, PoseWithCovarianceStamped.pose.pose.orientation.z)
+        orientation = Orientation(PoseWithCovarianceStamped.pose.pose.orientation.z, PoseWithCovarianceStamped.pose.pose.orientation.w)
         self.position = Point(x, y)
-        self.angle = angle
-        self.pose_publisher.update_broadcast(str(x) + "," + str(y) + "," + str(angle))
-
-    def listenToPose(self):
-        while (True):
-            # Only applies when the turtlebot is navigating to a goal
-            if (self.going_to_goal):
-                close_to_other_turtlebots = False
-                for turtlebot in pose_listener:
-                    (x, y, theta) = self.pose_listener[turtlebot].get_message().split(",")
-                    if (self.position.distance(Point(x, y)) < self.DISTANCE_TOLERANCE):
-                        close_to_other_turtlebots = True
-        
-                if (close_to_other_turtlebots):
-                    # Tell the turtlebot to stop, so that it can detect the other turtlebot and reroute around it
-                    self.stop() # Defaults to stopping for 2 seconds
-                    
-                    # Give the turtlebot time to move (travel to the goal). Without this, the turtlebot wouldn't move at all.
-                    time.sleep(10)
-
-
-# Gets the yaw angle from the quaternion describing the object's position
-def getTheta(w, z):
-    mag = math.sqrt(w ** 2 + z ** 2)
-    w /= mag
-    z /= mag
-    return math.atan2(2 * w * z, w ** 2 - z ** 2) #- math.pi / 2
+        self.angle = orientation.getTheta()
 
 
 if __name__=="__main__":
-    rospy.init_node('navigator')
-
-    navigator = MultiNavigator("donatello", [])
-
+    name = raw_input("Enter name: ")
+    multinavigator = MultiNavigator(name)
     while (True):
-        command = raw_input("Enter command: ")
-        if (command == "move"):
-            distance = float(raw_input("Enter distance: "))
-            velocity = raw_input("Enter velocity: ")
-            if (velocity == ""):
-                navigator.move(distance)
-            else:
-                navigator.move(distance, float(velocity))
-        elif (command == "turn"):
-            angle = float(raw_input("Enter angle: "))
-            angular_velocity = raw_input("Enter angular velocity: ")
-            if (angular_velocity == ""):
-                navigator.turn(angle)
-            else:
-                navigator.turn(angle, float(angular_velocity))
-        elif (command == "stop"):
-            stop_time = raw_input("Enter stop time: ")
-            if (stop_time == ""):
-                navigator.stop()
-            else:
-                navigator.stop(float(stop_time))
-        elif (command == "navigate"):
-            (x, y) = [float(coordinate) for coordinate in raw_input("Enter goal position (as x,y): ").split(",")]
-            (z, w) = [float(coordinate) for coordinate in raw_input("Enter goal orientation (as z,w): ").split(",")]
-            navigator.goToPose(Point(x, y), (z, w))
-        elif (command == "show_variables"):
-            print "Default velocity =", navigator.default_velocity
-            print "Default angular velocity =", navigator.default_angular_velocity
-            print "going_to_goal =", navigator.going_to_goal
+        command = raw_input("Enter command (reserve, release, end): ")
+        if (command == "reserve"):
+            (x, y) = [float(coord) for coord in raw_input("Enter point as x,y: ").split(",")]
+            multinavigator.reserveWaypoint(Point(x, y))
+        elif (command == "release"):
+            (x, y) = [float(coord) for coord in raw_input("Enter point as x,y: ").split(",")]
+            multinavigator.releaseWaypoint(Point(x, y))
+    
         elif (command == "end"):
             break
-
+    
 

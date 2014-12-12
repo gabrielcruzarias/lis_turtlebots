@@ -2,7 +2,7 @@ import socket
 from threading import Thread
 
 class SimpleClient:
-  def __init__(self, host="localhost", port=12348): #pr2mm1.csail.mit.edu
+  def __init__(self, host="localhost", port=12346): #pr2mm1.csail.mit.edu
     self.host = host
     self.port = port
     self.message_received = "NONE"
@@ -16,7 +16,7 @@ class SimpleClient:
   
   
 class SimpleServer:
-  def __init__(self, port=12346, threading=True):
+  def __init__(self, port=12346, threading=False):
     self.s = socket.socket()
     self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
     self.s.bind(("", port))
@@ -52,7 +52,7 @@ if __name__=="__main__":
   if server_type == "B":
     broadcaster = SimpleServer()
     for i in range(5):
-      #msg = raw_input("Enter text you want to broadcast: ")
+      msg = raw_input("Enter text you want to broadcast: ")
       #broadcaster.broadcast(msg)
       broadcaster.broadcast("hello! %d " % i)
       broadcaster.msg = "Broadcasting message now  %d " % i
