@@ -18,37 +18,35 @@ class Turtlebot(object):
         self.pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist)
         self.twist = Twist()
         
+    # Moves the turtlebot "distance" meters at "velocity" m/s
     def move(self, distance, velocity = None):
         if (velocity == None):
             velocity = self.default_velocity
         t = time.time()
         while (time.time() - t < distance / float(velocity)):
-            self.twist.linear.x = velocity; self.twist.linear.y = 0; self.twist.linear.z = 0
-            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-            self.pub.publish(self.twist)
-        self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-        self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-        self.pub.publish(self.twist)
+            self.setVelocity(velocity, 0)
+        self.setVelocity(0, 0)
 
-    # Turns the turtlebot alpha radians
+    # Turns the turtlebot "angle" radians at "angular_velocity" rad/s
     def turn(self, angle, angular_velocity = None):
         if (angular_velocity == None):
             angular_velocity = self.default_angular_velocity
         t = time.time()
         while (time.time() - t < 2 * (angle / angular_velocity)): # I don't know why but it seems like a velocity of 1 is really ~0.5 rad/s
-            self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = math.copysign(angular_velocity, angle)
-            self.pub.publish(self.twist)
-        self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-        self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-        self.pub.publish(self.twist)
+            self.setVelocity(0, math.copysign(angular_velocity, angle))
+        self.setVelocity(0, 0)
 
+    # Makes the turtlebot stop for "stop_time" seconds
     def stop(self, stop_time = 2):
         t = time.time()
         while (time.time() - t < stop_time):
-            self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-            self.pub.publish(self.twist)
+            self.setVelocity(0, 0)
+            
+    # Sets the linear velocity of the robot to "linear" m/s and the angular velocity to "angular" rad/s
+    def setVelocity(self, linear, angular):
+        self.twist.linear.x = linear; self.twist.linear.y = 0; self.twist.linear.z = 0
+        self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = angular
+        self.pub.publish(self.twist)
 
 
 if __name__=="__main__":

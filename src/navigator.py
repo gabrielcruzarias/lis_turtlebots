@@ -23,10 +23,12 @@ class Navigator(Turtlebot):
         rospy.Subscriber('/move_base/result', MoveBaseActionResult, self.goalResult)
         self.going_to_goal = False
 
+    # Go to the specified pose and wait until the turtlebot reaches it
     def goToPose(self, position, orientation, frame = "map"):
         self.publishGoal(position, orientation, frame)
         return self.waitToReachGoal()
-
+    
+    # Go to the specified pose without waiting for the turtlebot to reach it. Useful for waypoint navigation
     def publishGoal(self, position, orientation, frame = "map"):
         self.going_to_goal = True
         self.goal.target_pose.header.frame_id = frame
@@ -37,11 +39,13 @@ class Navigator(Turtlebot):
         self.nav.send_goal(self.goal)
         self.nav.wait_for_result(rospy.Duration.from_sec(5.0)) # Does this line do anything?
 
+    # Wait until the goal is reached
     def waitToReachGoal(self):
         while (self.going_to_goal):
             rospy.sleep(1)
         return True
 
+    # Listens to the "/move_base/result" topic to determine when the goal is reached
     def goalResult(self, MoveBaseActionResult):
         self.going_to_goal = False
         #if (MoveBaseActionResult.status.status == 3):

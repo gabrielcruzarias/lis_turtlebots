@@ -15,9 +15,9 @@ from Orientation import *
 ROOM1 = (Point(), Orientation())
 ROOM2 = (Point(), Orientation())
 ROOM3 = (Point(), Orientation())
-KITCHEN1 = (Point(), Orientation())
-KITCHCEN2 = (Point(), Orientation())
-AFTER_PR2 = (Point(), Orientation())
+KITCHEN1 = (Point(0, -0.67), Orientation(0, 1))
+KITCHCEN2 = (Point(0, -0.1), Orientation(-0.196, 0.981))
+AFTER_PR2 = (Point(0, 0.74), Orientation(1, 0))
 
 # Waypoints
 
@@ -25,6 +25,7 @@ PR2 = (Point(), Orientation())
 
 ROOM1_ENTRANCE = (Point(), Orientation())
 ROOM1_EXIT = (Point(), Orientation())
+ROOM1_HALLWAY = (Point(-1.12, 0), Orientation(0, 1))
 
 ROOM2_ENTRANCE = (Point(), Orientation())
 ROOM2_EXIT = (Point(), Orientation())

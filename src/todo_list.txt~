@@ -4,6 +4,7 @@ WITHOUT TURTLEBOTS
 - Scenario description
 - SMACH or some other way of reading Chris's plan
 - Drinks container
+- Make turtlebot remember room (so that it delivers the drinks to the right place)
 
 
 WITH TURTLEBOTS

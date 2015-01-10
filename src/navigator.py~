@@ -23,6 +23,7 @@ class Navigator(Turtlebot):
         rospy.Subscriber('/move_base/result', MoveBaseActionResult, self.goalResult)
         self.going_to_goal = False
 
+    # Go to the specified pose 
     def goToPose(self, position, orientation, frame = "map"):
         self.publishGoal(position, orientation, frame)
         return self.waitToReachGoal()
@@ -37,7 +38,7 @@ class Navigator(Turtlebot):
         self.nav.send_goal(self.goal)
         self.nav.wait_for_result(rospy.Duration.from_sec(5.0)) # Does this line do anything?
 
-    def waitToReachGoal():
+    def waitToReachGoal(self):
         while (self.going_to_goal):
             rospy.sleep(1)
         return True

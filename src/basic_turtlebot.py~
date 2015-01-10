@@ -23,12 +23,8 @@ class Turtlebot(object):
             velocity = self.default_velocity
         t = time.time()
         while (time.time() - t < distance / float(velocity)):
-            self.twist.linear.x = velocity; self.twist.linear.y = 0; self.twist.linear.z = 0
-            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-            self.pub.publish(self.twist)
-        self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-        self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-        self.pub.publish(self.twist)
+            self.setVelocity(velocity, 0)
+        self.setVelocity(0, 0)
 
     # Turns the turtlebot alpha radians
     def turn(self, angle, angular_velocity = None):
@@ -36,28 +32,18 @@ class Turtlebot(object):
             angular_velocity = self.default_angular_velocity
         t = time.time()
         while (time.time() - t < 2 * (angle / angular_velocity)): # I don't know why but it seems like a velocity of 1 is really ~0.5 rad/s
-            self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = math.copysign(angular_velocity, angle)
-            self.pub.publish(self.twist)
-        self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-        self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-        self.pub.publish(self.twist)
+            self.setVelocity(0, math.copysign(angular_velocity, angle))
+        self.setVelocity(0, 0)
 
     def stop(self, stop_time = 2):
         t = time.time()
         while (time.time() - t < stop_time):
-            self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-            self.pub.publish(self.twist)
-
-    # Gets the pose of the object relative to the robot (through the AR tags)
-    def objectPose(self, AlvarMarkers):
-        if (len(AlvarMarkers.markers) > 0):
-            self.obj_y = AlvarMarkers.markers[0].pose.pose.position.y
-            self.obj_x = AlvarMarkers.markers[0].pose.pose.position.x
-            orientation = Orientation(0, 0, AlvarMarkers.markers[0].pose.pose.orientation.z, AlvarMarkers.markers[0].pose.pose.orientation.w)
-            self.obj_theta = orientation.getTheta()
-            #print "y = ", obj_y, ", theta = ", obj_theta / math.pi, "*pi"
+            self.setVelocity(0, 0)
+            
+    def setVelocity(self, linear, angular):
+        self.twist.linear.x = linear; self.twist.linear.y = 0; self.twist.linear.z = 0
+        self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = angular
+        self.pub.publish(self.twist)
 
 
 if __name__=="__main__":

@@ -14,14 +14,10 @@ class TurtlebotWithAR(Turtlebot):
         if (len(AlvarMarkers.markers) > 0):
             self.obj_y = AlvarMarkers.markers[0].pose.pose.position.y
             self.obj_x = AlvarMarkers.markers[0].pose.pose.position.x
-            orientation = Orientation(0, 0, AlvarMarkers.markers[0].pose.pose.orientation.z, AlvarMarkers.markers[0].pose.pose.orientation.w)
+            orientation = Orientation(AlvarMarkers.markers[0].pose.pose.orientation.z, AlvarMarkers.markers[0].pose.pose.orientation.w)
             self.obj_theta = orientation.getTheta()
-            #print "y = ", obj_y, ", theta = ", obj_theta / math.pi, "*pi"
 
-    # Face the object
-    # INITIAL CONDITIONS: Robot is close to the object
-    # GOAL: The robot faces the object and the robot, object, and goal all lie on the same line (the robot can just move straight
-    # forward and it'll hit the object and eventually the goal)
+    # Face the object (obj_y ~= 0)
     def face(self, error = 0.1):
         self.obj_y = 10.0
         w = 0.4
@@ -35,22 +31,16 @@ class TurtlebotWithAR(Turtlebot):
                 if (abs(self.obj_y) < 0.95):
                     start_t = time.time()
                 if (time.time() - t > 6 and abs(self.obj_y) > 0.3):
-                    self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-                    self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-                    self.pub.publish(self.twist)
+                    self.setVelocity(0, 0)
                     time.sleep(1.5)
                     t = time.time()
-                self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-                self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = math.copysign(max(min(abs(self.obj_y), w), 0.2), self.obj_y)
-                self.pub.publish(self.twist)
-            self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-            self.pub.publish(self.twist)
+                self.setVelocity(0, math.copysign(max(min(abs(self.obj_y), w), 0.2), self.obj_y))
+            self.setVelocity(0, 0)
             self.obj_y = math.copysign(10.0, self.obj_y)
             time.sleep(2)
         return "obj_found"
 
-
+    # Move until turtlebot is "desired_distance" meters away from the AR tag
     def approach(self, desired_distance = 0.4):
         distance = math.sqrt(self.obj_x**2 + self.obj_y**2)
         t = time.time()
@@ -60,15 +50,11 @@ class TurtlebotWithAR(Turtlebot):
                 t = time.time()
             print distance
             v = min(0.3, max(distance, 0.15))
-            self.twist.linear.x = v; self.twist.linear.y = 0; self.twist.linear.z = 0
-            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-            self.pub.publish(self.twist)
+            self.setVelocity(v, 0)
             time.sleep(0.3)
             distance = math.sqrt(self.obj_x**2 + self.obj_y**2)
         print distance
-        self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
-        self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
-        self.pub.publish(self.twist)
+        self.setVelocity(0, 0)
 
 
 
