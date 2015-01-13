@@ -12,14 +12,20 @@ from orientation import *
 
 
 class Turtlebot(object):
-    def __init__(self, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+        self.debug = debug
         self.default_velocity = default_velocity
         self.default_angular_velocity = default_angular_velocity
-        self.pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist)
-        self.twist = Twist()
+        if (not debug):
+            self.pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist)
+            self.twist = Twist()
         
     # Moves the turtlebot "distance" meters at "velocity" m/s
     def move(self, distance, velocity = None):
+        if (self.debug):
+            raw_input("Hit enter to move " + str(distance) + " meters with velocity of " + str(velocity) + " m/s...")
+            return
+            
         if (velocity == None):
             velocity = self.default_velocity
         t = time.time()
@@ -29,10 +35,14 @@ class Turtlebot(object):
 
     # Turns the turtlebot "angle" radians at "angular_velocity" rad/s
     def turn(self, angle, angular_velocity = None):
+        if (self.debug):
+            raw_input("Hit enter to turn " + str(angle) + " radians with angular velocity of " + str(angular_velocity) + " rad/s...")
+            return
+            
         if (angular_velocity == None):
             angular_velocity = self.default_angular_velocity
         t = time.time()
-        while (time.time() - t < 2 * (angle / angular_velocity)): # I don't know why but it seems like a velocity of 1 is really ~0.5 rad/s
+        while (time.time() - t < 2 * (angle / angular_velocity)): # I don't know why but it seems like a velocity of 1 is really ~0.5 rad/s, so I multiply by 2 to fix that problem
             self.setVelocity(0, math.copysign(angular_velocity, angle))
         self.setVelocity(0, 0)
 

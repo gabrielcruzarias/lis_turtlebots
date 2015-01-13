@@ -15,21 +15,30 @@ from basic_turtlebot import *
 from point import *
 
 class Navigator(Turtlebot):
-    def __init__(self, default_velocity = 0.3, default_angular_velocity = 0.75):
-        Turtlebot.__init__(self, default_velocity, default_angular_velocity)
-        self.nav = actionlib.SimpleActionClient("move_base", MoveBaseAction)
-        self.nav.wait_for_server()
-        self.goal = MoveBaseGoal()
-        rospy.Subscriber('/move_base/result', MoveBaseActionResult, self.goalResult)
+    def __init__(self, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+        Turtlebot.__init__(self, debug, default_velocity, default_angular_velocity)
+        if (not debug):
+            self.nav = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+            self.nav.wait_for_server()
+            self.goal = MoveBaseGoal()
+            rospy.Subscriber('/move_base/result', MoveBaseActionResult, self.goalResult)
         self.going_to_goal = False
 
     # Go to the specified pose and wait until the turtlebot reaches it
     def goToPose(self, position, orientation, frame = "map"):
+        if (self.debug):
+            raw_input("Hit enter to go to pose (" + str(position) + "," + str(orientation) + ")...")
+            return
+        
         self.publishGoal(position, orientation, frame)
         return self.waitToReachGoal()
     
     # Go to the specified pose without waiting for the turtlebot to reach it. Useful for waypoint navigation
     def publishGoal(self, position, orientation, frame = "map"):
+        if (self.debug):
+            rospy.loginfo("Hit enter to publish the goal of (" + str(position) + "," + str(orientation) + ")...")
+            return
+    
         self.going_to_goal = True
         self.goal.target_pose.header.frame_id = frame
         self.goal.target_pose.header.stamp.secs = rospy.get_time()

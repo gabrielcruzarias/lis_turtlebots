@@ -23,8 +23,9 @@ AFTER_PR2 = (Point(0, 0.74), Orientation(1, 0))
 
 PR2 = (Point(), Orientation())
 
-ROOM1_ENTRANCE = (Point(-1.12, 0), Orientation(-0.1, 0.995))
+ROOM1_ENTRANCE = (Point(), Orientation())
 ROOM1_EXIT = (Point(), Orientation())
+ROOM1_HALLWAY = (Point(-1.12, 0), Orientation(0, 1))
 
 ROOM2_ENTRANCE = (Point(), Orientation())
 ROOM2_EXIT = (Point(), Orientation())

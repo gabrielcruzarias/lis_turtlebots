@@ -71,11 +71,11 @@ class interface:
       while not msg_received:
           try:
               if (name == "donatello"):
-                  msg = self.clientD.get_message()
+                  msg = self.clientD.get_message().split(",")[1]
                   self.turtle_being_attended = "donatello"
                   #rospy.loginfo("message received from donatello is: %s " % msg)
               elif (name == "leonardo"):
-                  msg = self.clientL.get_message()
+                  msg = self.clientL.get_message().split(",")[1]
                   self.turtle_being_attended = "leonardo"
                   #rospy.loginfo("message received from leonardo is: %s " % msg)
               else:
@@ -92,12 +92,12 @@ class interface:
       msgL = None
       while not msg_received:
           try:
-              msgD = self.clientD.get_message()
+              msgD = self.clientD.get_message().split(",")[1]
               #rospy.loginfo("message received from donatello is: %s " % msgD)
           except:
               pass
           try:
-              msgL = self.clientL.get_message()
+              msgL = self.clientL.get_message().split(",")[1]
               #rospy.loginfo("message received from leonardo is: %s " % msgL)
           except:
               pass
