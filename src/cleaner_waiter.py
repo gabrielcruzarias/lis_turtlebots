@@ -167,6 +167,10 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to leave PR2...")
         self.send_msg_to_pr2("turtle left pr2")
+        
+    def goToAfterPR2(self):
+        self.wayposeNavigation(PATH_WAYPOSES[(self.location, "after_pr2")])
+        self.location = "after_pr2"
     
     
     ######################################################################################

@@ -19,12 +19,14 @@ from multinavigator import *
 
 
 class WaiterTimings(Waiter):
-    timings = {("room1", "room2") : [], ("room1", "room3") : [], ("room1", "kitchen") : [], ("room2", "room1") : [], ("room2", "room3") : [], ("room2", "kitchen") : [], ("room3", "room1") : [], ("room3", "room2") : [], ("room3", "kitchen") : [], ("kitchen", "room1") : [], ("kitchen", "room2") : [], ("kitchen", "room3") : []}
-    possible_actions = {"kitchen" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3"], "room1" : ["GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room2" : ["GO_TO_ROOM1", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room3" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_KITCHEN"]}
+    timings = {("room1", "room2") : [], ("room1", "room3") : [], ("room1", "kitchen") : [], ("room2", "room1") : [], ("room2", "room3") : [], ("room2", "kitchen") : [], ("room3", "room1") : [], ("room3", "room2") : [], ("room3", "kitchen") : [], ("kitchen", "room1") : [], ("kitchen", "room2") : [], ("kitchen", "room3") : [], ("kitchen", "after_pr2") : [], ("after_pr2", "room1") : [], ("after_pr2", "room2") : [], ("after_pr2", "room3") : []}
+    possible_actions = {"kitchen" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_AFTER_PR2"], "room1" : ["GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room2" : ["GO_TO_ROOM1", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room3" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_KITCHEN"], "after_pr2" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3"]}
+    timings_ports = {"donatello" : 12352, "leonardo" : 12353}
     
     def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_ROOM1", debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         Waiter.__init__(name, start_location, start_drinks_ordered, start_action, debug, default_velocity, default_angular_velocity)
         
+        self.timings_server = SimpleServer(port = self.timings_ports[name], threading = False)
     
     def gatherTimings(self):
         while True:
@@ -38,7 +40,8 @@ class WaiterTimings(Waiter):
                 self.goToRoom3()
             elif (self.action == "GO_TO_KITCHEN"):
                 self.goToKitchen()
-            
+            elif (self.action == "GO_TO_AFTER_PR2"):
+                self.goToAfterPR2()
             self.addTiming(t, loc)
             action_index = random.randint(0, len(self.possible_actions[self.location]) - 1)
             self.action = self.possible_actions[self.location][action_index]
@@ -46,6 +49,7 @@ class WaiterTimings(Waiter):
     def addTiming(self, t, loc):
         delta_t = time.time() - t
         timings[(loc, self.location)].append(delta_t)
-        
+        msg = loc + "," + self.location + "," + str(delta_t)
+        self.timings_server.broadcast(msg)
     
     

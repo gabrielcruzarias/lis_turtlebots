@@ -13,14 +13,15 @@ import actionlib
 import math
 import time
 import random
+import numpy
 #from turtlebot_2turtles_communication import *
 from SimpleServer import *
 from multinavigator import *
 
 
 class WaiterTimings(Waiter):
-    timings = {("room1", "room2") : [], ("room1", "room3") : [], ("room1", "kitchen") : [], ("room2", "room1") : [], ("room2", "room3") : [], ("room2", "kitchen") : [], ("room3", "room1") : [], ("room3", "room2") : [], ("room3", "kitchen") : [], ("kitchen", "room1") : [], ("kitchen", "room2") : [], ("kitchen", "room3") : [], ("kitchen", "after_pr2") : [], ("after_pr2", "room1") : [], ("after_pr2", "room2") : [], ("after_pr2", "room3") : []}
-    possible_actions = {"kitchen" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_AFTER_PR2"], "room1" : ["GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room2" : ["GO_TO_ROOM1", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room3" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_KITCHEN"], "after_pr2" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3"]}
+    timings = {("room1", "room2") : [], ("room1", "room3") : [], ("room1", "kitchen") : [], ("room2", "room1") : [], ("room2", "room3") : [], ("room2", "kitchen") : [], ("room3", "room1") : [], ("room3", "room2") : [], ("room3", "kitchen") : [], ("kitchen", "room1") : [], ("kitchen", "room2") : [], ("kitchen", "room3") : []}
+    possible_actions = {"kitchen" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3"], "room1" : ["GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room2" : ["GO_TO_ROOM1", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room3" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_KITCHEN"]}
     timings_ports = {"donatello" : 12352, "leonardo" : 12353}
     
     def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_ROOM1", debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
