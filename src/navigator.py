@@ -12,11 +12,12 @@ import math
 import actionlib
 #import tf
 from basic_turtlebot import *
+from turtlebot_with_ar import *
 from point import *
 
-class Navigator(Turtlebot):
+class Navigator(TurtlebotWithAR):
     def __init__(self, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
-        Turtlebot.__init__(self, debug, default_velocity, default_angular_velocity)
+        TurtlebotWithAR.__init__(self, debug, default_velocity, default_angular_velocity)
         if (not debug):
             self.nav = actionlib.SimpleActionClient("move_base", MoveBaseAction)
             self.nav.wait_for_server()
@@ -88,6 +89,8 @@ if __name__=="__main__":
                 navigator.stop()
             else:
                 navigator.stop(float(stop_time))
+        elif (command == "approach"):
+            navigator.approach()
         elif (command == "navigate"):
             (x, y) = [float(coordinate) for coordinate in raw_input("Enter goal position (as x,y): ").split(",")]
             (z, w) = [float(coordinate) for coordinate in raw_input("Enter goal orientation (as z,w): ").split(",")]
