@@ -22,7 +22,7 @@ class Waiter(MultiNavigator):
     DRINKS_ORDERS_LIMIT = {"room1" : 2, "room2" : 2, "room3" : 2}
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_ROOM1", debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_ROOM1", debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         self.name = name
         #MultiNavigator.__init__(self, name, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
@@ -100,10 +100,10 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to room 1...")
         self.location = "room1"
-        self.deliverDrinks()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        self.getOrders()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.deliverDrinks()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.getOrders()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         
         
     def goToRoom2(self):
@@ -113,10 +113,10 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to room 2...")
         self.location = "room2"
-        self.deliverDrinks()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        self.getOrders()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.deliverDrinks()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.getOrders()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
     
     
     def goToRoom3(self):
@@ -126,10 +126,10 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to room 3...")
         self.location = "room3"
-        self.deliverDrinks()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        self.getOrders()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.deliverDrinks()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.getOrders()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         
     
     def goToKitchen(self):
@@ -142,7 +142,7 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to the kitchen...")
         self.location = "kitchen"
-        self.listenToPR2()
+        #self.listenToPR2()
     
     def waitInKitchen(self):
         self.wait_until_msg_is("pr2 ready to place can")
