@@ -4,8 +4,8 @@ from ar_track_alvar.msg import AlvarMarkers
 from basic_turtlebot import *
 
 class TurtlebotWithAR(Turtlebot):
-    def __init__(self, default_velocity = 0.3, default_angular_velocity = 0.75):
-        Turtlebot.__init__(self, default_velocity, default_angular_velocity)
+    def __init__(self, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+        Turtlebot.__init__(self, debug, default_velocity, default_angular_velocity)
         self.obj_x = 10.0; self.obj_y = 10.0; self.obj_theta = 0.0
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self.objectPose)
 
@@ -17,9 +17,7 @@ class TurtlebotWithAR(Turtlebot):
             orientation = Orientation(AlvarMarkers.markers[0].pose.pose.orientation.z, AlvarMarkers.markers[0].pose.pose.orientation.w)
             self.obj_theta = orientation.getTheta()
 
-    # Face the object
-    # INITIAL CONDITIONS: Robot is close to the object
-    # GOAL: The robot faces the object (obj_y ~= 0)
+    # Face the object (obj_y ~= 0)
     def face(self, error = 0.1):
         self.obj_y = 10.0
         w = 0.4
@@ -42,7 +40,7 @@ class TurtlebotWithAR(Turtlebot):
             time.sleep(2)
         return "obj_found"
 
-
+    # Move until turtlebot is "desired_distance" meters away from the AR tag
     def approach(self, desired_distance = 0.4):
         distance = math.sqrt(self.obj_x**2 + self.obj_y**2)
         t = time.time()
