@@ -101,42 +101,48 @@ class Waiter(MultiNavigator):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room1...")
         if (True):
+            if (self.location == "kitchen"):
+                self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room1")])
         else:
             raw_input("Hit enter to go to room 1...")
         self.location = "room1"
-        self.deliverDrinks()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        self.getOrders()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.deliverDrinks()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.getOrders()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         
         
     def goToRoom2(self):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room2...")
         if (True):
+            if (self.location == "kitchen"):
+                self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room2")])
         else:
             raw_input("Hit enter to go to room 2...")
         self.location = "room2"
-        self.deliverDrinks()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        self.getOrders()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.deliverDrinks()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.getOrders()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
     
     
     def goToRoom3(self):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room3...")
         if (True):
+            if (self.location == "kitchen"):
+                self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room3")])
         else:
             raw_input("Hit enter to go to room 3...")
         self.location = "room3"
-        self.deliverDrinks()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        self.getOrders()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.deliverDrinks()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #self.getOrders()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         
     
     def goToKitchen(self):
@@ -149,7 +155,7 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to the kitchen...")
         self.location = "kitchen"
-        self.listenToPR2()
+        #self.listenToPR2()
     
     def waitInKitchen(self):
         self.wait_until_msg_is("pr2 ready to place can")

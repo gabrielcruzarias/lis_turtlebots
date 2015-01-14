@@ -38,12 +38,12 @@ class Waiter(MultiNavigator):
             pr2_host = "localhost"
         self.listen_to_pr2_client = SimpleClient(host = pr2_host, port = 12345) # "pr2mm1.csail.mit.edu"
         
-        self.goToPose(ROOM1_HALLWAY[0], ROOM1_HALLWAY[1])
+        #self.goToPose(ROOM1_HALLWAY[0], ROOM1_HALLWAY[1])
         
-        if (self.name == "donatello"):
-            self.goToPose(KITCHEN1[0], KITCHEN1[1])
-        else:
-            self.goToPose(KITCHEN2[0], KITCHEN2[1])
+        #if (self.name == "donatello"):
+        #    self.goToPose(KITCHEN1[0], KITCHEN1[1])
+        #else:
+        #    self.goToPose(KITCHEN2[0], KITCHEN2[1])
 
         #self.eventLoop()
 
@@ -101,6 +101,8 @@ class Waiter(MultiNavigator):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room1...")
         if (True):
+            if (self.location == "kitchen"):
+                self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room1")])
         else:
             raw_input("Hit enter to go to room 1...")
@@ -115,6 +117,8 @@ class Waiter(MultiNavigator):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room2...")
         if (True):
+            if (self.location == "kitchen"):
+                self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room2")])
         else:
             raw_input("Hit enter to go to room 2...")
@@ -129,6 +133,8 @@ class Waiter(MultiNavigator):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room3...")
         if (True):
+            if (self.location == "kitchen"):
+                self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room3")])
         else:
             raw_input("Hit enter to go to room 3...")

@@ -59,7 +59,7 @@ class MultiNavigator(Navigator):
     
     # Wait until the robot's location is within self.DISTANCE_TOLERANCE of point. Used to cancel a waypoint
     # once the robot is close to it so that it doesn't lose time trying to get the specified orientation.
-    def waitUntilCloseToGoal(point):
+    def waitUntilCloseToGoal(self, point):
         if (self.debug):
             raw_input("Hit enter when the robot is close enough to " + str(point) + "...")
             return
