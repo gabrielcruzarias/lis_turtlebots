@@ -31,7 +31,7 @@ class TimingsListener(object):
         
         for name in self.timings_ports.keys():
             self.listener[name] = SimpleClient(host = self.timings_hosts[name], port = self.timings_ports[name])
-            t = Thread(target = self.listen, args = [client_name])
+            t = Thread(target = self.listen, args = [name])
             t.start()
             
         self.loop()
@@ -70,14 +70,18 @@ class TimingsListener(object):
                     combined_timings[key] = self.timings["donatello"][key] + self.timings["leonardo"][key]
                 average = {key : numpy.average(combined_timings[key]) for key in combined_timings.keys()}
                 std = {key : numpy.std(combined_timings[key]) for key in combined_timings.keys()}
-                key = tuple(command.split(","))
-                print key + " -> average = " + str(average[key]) + ", std = " + str(std[key]) + ", timings = " + str(combined_timings[key])
+                try:
+                    key = tuple(command.split(","))
+                    print key + " -> average = " + str(average[key]) + ", std = " + str(std[key]) + ", timings = " + str(combined_timings[key])
+                except:
+                    print "ILLEGAL COMMAND!!"
     
     
     
     
     
-    
+if __name__=="__main__":
+    timings_listener = TimingsListener()
     
     
     

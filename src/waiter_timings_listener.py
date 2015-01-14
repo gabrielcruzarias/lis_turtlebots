@@ -31,7 +31,7 @@ class TimingsListener(object):
         
         for name in self.timings_ports.keys():
             self.listener[name] = SimpleClient(host = self.timings_hosts[name], port = self.timings_ports[name])
-            t = Thread(target = self.listen, args = [client_name])
+            t = Thread(target = self.listen, args = [name])
             t.start()
             
         self.loop()
@@ -80,7 +80,8 @@ class TimingsListener(object):
     
     
     
-    
+if __name__=="__main__":
+    timings_listener = TimingsListener()
     
     
     

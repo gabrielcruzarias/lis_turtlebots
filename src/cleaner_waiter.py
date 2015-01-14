@@ -15,7 +15,7 @@ import time
 #from turtlebot_2turtles_communication import *
 from SimpleServer import *
 from multinavigator import *
-
+from waiter_locations import *
 
 class Waiter(MultiNavigator):
     waiter_ports = {"donatello" : 12346, "leonardo" : 12347}

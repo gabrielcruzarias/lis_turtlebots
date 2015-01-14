@@ -15,7 +15,7 @@ import time
 import random
 #from turtlebot_2turtles_communication import *
 from SimpleServer import *
-from multinavigator import *
+from cleaner_waiter import *
 
 
 class WaiterTimings(Waiter):
@@ -29,6 +29,14 @@ class WaiterTimings(Waiter):
         self.timings_server = SimpleServer(port = self.timings_ports[name], threading = False)
     
     def gatherTimings(self):
+    
+        self.goToPose(ROOM1_HALLWAY[0], ROOM1_HALLWAY[1])
+        
+        if (self.name == "donatello"):
+            self.goToPose(KITCHEN1[0], KITCHEN1[1])
+        else:
+            self.goToPose(KITCHEN2[0], KITCHEN2[1])
+    
         while True:
             t = time.time()
             loc = self.location
@@ -52,4 +60,12 @@ class WaiterTimings(Waiter):
         msg = loc + "," + self.location + "," + str(delta_t)
         self.timings_server.broadcast(msg)
     
-    
+
+if __name__=="__main__":
+    name = raw_input("Enter name: ")
+    rospy.init_node("waiter_"+name)
+    waiter = WaiterTimings(name)
+    raw_input("Hit enter to start...")
+    waiter.eventLoop()
+
+
