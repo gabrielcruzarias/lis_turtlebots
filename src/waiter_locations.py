@@ -1,7 +1,7 @@
 
 
-from Point import *
-from Orientation import *
+from point import *
+from orientation import *
 
 #MAP LOCATIONS:
 
@@ -54,6 +54,9 @@ PATH_WAYPOSES[("room3", "kitchen1")] = [ROOM3_EXIT, ROOM2_ENTRANCE, ROOM2_EXIT, 
 PATH_WAYPOSES[("room3", "kitchen2")] = [ROOM3_EXIT, ROOM2_ENTRANCE, ROOM2_EXIT, ROOM1_ENTRANCE, ROOM1_HALLWAY, KITCHEN2]
 
 PATH_WAYPOSES[("kitchen", "after_pr2")] = [PR2, AFTER_PR2]
+PATH_WAYPOSES[("kitchen", "room1")] = [ROOM1_HALLWAY, ROOM1_ENTRANCE, ROOM1]
+PATH_WAYPOSES[("kitchen", "room2")] = [ROOM1_HALLWAY, ROOM2_HALLWAY, ROOM2_ENTRANCE, ROOM2]
+PATH_WAYPOSES[("kitchen", "room3")] = [ROOM1_HALLWAY, ROOM2_HALLWAY, ROOM3_HALLWAY, ROOM3_ENTRANCE, ROOM3]
 
 PATH_WAYPOSES[("after_pr2", "room1")] = [ROOM1_HALLWAY, ROOM1_ENTRANCE, ROOM1]
 PATH_WAYPOSES[("after_pr2", "room2")] = [ROOM1_HALLWAY, ROOM2_HALLWAY, ROOM2_ENTRANCE, ROOM2]

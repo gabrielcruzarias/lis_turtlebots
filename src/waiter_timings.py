@@ -23,8 +23,8 @@ class WaiterTimings(Waiter):
     possible_actions = {"kitchen" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_AFTER_PR2"], "room1" : ["GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room2" : ["GO_TO_ROOM1", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room3" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_KITCHEN"], "after_pr2" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3"]}
     timings_ports = {"donatello" : 12352, "leonardo" : 12353}
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_ROOM1", debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
-        Waiter.__init__(name, start_location, start_drinks_ordered, start_action, debug, default_velocity, default_angular_velocity)
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_ROOM1", debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
+        Waiter.__init__(self, name, start_location, start_drinks_ordered, start_action, debug, default_velocity, default_angular_velocity)
         
         self.timings_server = SimpleServer(port = self.timings_ports[name], threading = False)
     
@@ -56,7 +56,7 @@ class WaiterTimings(Waiter):
         
     def addTiming(self, t, loc):
         delta_t = time.time() - t
-        timings[(loc, self.location)].append(delta_t)
+        self.timings[(loc, self.location)].append(delta_t)
         msg = loc + "," + self.location + "," + str(delta_t)
         self.timings_server.broadcast(msg)
     
@@ -66,6 +66,6 @@ if __name__=="__main__":
     rospy.init_node("waiter_"+name)
     waiter = WaiterTimings(name)
     raw_input("Hit enter to start...")
-    waiter.eventLoop()
+    waiter.gatherTimings()
 
 

@@ -14,7 +14,7 @@ class MultiNavigator(Navigator):
     waypoints_host = "10.68.0.165" #"localhost" #"10.68.0.171"
     DISTANCE_TOLERANCE = 0.5 # When the robot is within this distance of a waypoint, we publish a new goal (to make the path smoother)
     
-    def __init__(self, name, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
         Navigator.__init__(self, debug, default_velocity, default_angular_velocity)
         self.name = name
         self.position = Point(0, 0)
@@ -59,7 +59,7 @@ class MultiNavigator(Navigator):
     
     # Wait until the robot's location is within self.DISTANCE_TOLERANCE of point. Used to cancel a waypoint
     # once the robot is close to it so that it doesn't lose time trying to get the specified orientation.
-    def waitUntilCloseToGoal(point):
+    def waitUntilCloseToGoal(self, point):
         if (self.debug):
             raw_input("Hit enter when the robot is close enough to " + str(point) + "...")
             return

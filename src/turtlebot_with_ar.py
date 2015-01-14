@@ -7,7 +7,9 @@ class TurtlebotWithAR(Turtlebot):
     def __init__(self, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         Turtlebot.__init__(self, debug, default_velocity, default_angular_velocity)
         self.obj_x = 10.0; self.obj_y = 10.0; self.obj_theta = 0.0
-        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self.objectPose)
+        if (not self.debug):
+            rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self.objectPose)
+        
 
     # Gets the pose of the object relative to the robot (through the AR tags)
     def objectPose(self, AlvarMarkers):

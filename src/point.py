@@ -7,9 +7,13 @@ class Point(object):
         self.z = z
 
     def __eq__(self, p):
+        if (p == None):
+            return False
         return (self.x == p.x) and (self.y == p.y) and (self.z == p.z)
 
     def __ne__(self, p):
+        if (p == None):
+            return True
         return (self.x != p.x) or (self.y != p.y) or (self.z != p.z)
 
     def __neg__(self):

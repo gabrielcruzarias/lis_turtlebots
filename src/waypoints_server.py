@@ -10,6 +10,9 @@ class WaypointsServer(object):
     #client_hosts = {"donatello" : "localhost", "leonardo" : "localhost"} # no robot testing
     server_ports = {"donatello" : 12350, "leonardo" : 12351}
     def __init__(self):
+        
+        self.stop = False
+        
         self.reserved_waypoints = {}
         
         self.client_requesters = {}
@@ -20,9 +23,13 @@ class WaypointsServer(object):
             self.client_responders[client_name] = SimpleServer(port = self.server_ports[client_name], threading = False)
             t = Thread(target = self.loop, args = [client_name])
             t.start()
+        
+        while (not self.stop):
+            raw_input("Hit enter to stop")
+            self.stop = True
     
     def loop(self, client_name):
-        while (True):
+        while (not self.stop):
             (command, x, y) = self.client_requesters[client_name].get_message().split(",")
             if (command == "reserve"):
                 #print client_name + " is reserving waypoint Point" + str((x, y))

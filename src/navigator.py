@@ -16,7 +16,7 @@ from turtlebot_with_ar import *
 from point import *
 
 class Navigator(TurtlebotWithAR):
-    def __init__(self, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
         TurtlebotWithAR.__init__(self, debug, default_velocity, default_angular_velocity)
         if (not debug):
             self.nav = actionlib.SimpleActionClient("move_base", MoveBaseAction)
@@ -24,6 +24,7 @@ class Navigator(TurtlebotWithAR):
             self.goal = MoveBaseGoal()
             rospy.Subscriber('/move_base/result', MoveBaseActionResult, self.goalResult)
         self.going_to_goal = False
+        
 
     # Go to the specified pose and wait until the turtlebot reaches it
     def goToPose(self, position, orientation, frame = "map"):

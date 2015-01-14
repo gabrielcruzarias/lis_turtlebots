@@ -25,12 +25,17 @@ class TimingsListener(object):
     timings_hosts = {"donatello" : "10.68.0.171", "leonardo" : "10.68.0.175"}
     
     def __init__(self):
+        self.debug = True
+    
         self.listener = {}
         
         self.stop = False
         
         for name in self.timings_ports.keys():
-            self.listener[name] = SimpleClient(host = self.timings_hosts[name], port = self.timings_ports[name])
+            if (self.debug):
+                self.listener[name] = SimpleClient(host = "localhost", port = self.timings_ports[name])
+            else:
+                self.listener[name] = SimpleClient(host = self.timings_hosts[name], port = self.timings_ports[name])
             t = Thread(target = self.listen, args = [name])
             t.start()
             
@@ -40,7 +45,7 @@ class TimingsListener(object):
     def listen(self, name):
         while (not self.stop):
             (loc0, loc1, delta_t) = self.listener[name].get_message().split(",")
-            timings[name][(loc0, loc1)].append(delta_t)
+            self.timings[name][(loc0, loc1)].append(float(delta_t))
     
     
     def loop(self):
@@ -55,7 +60,7 @@ class TimingsListener(object):
                 average = {key : numpy.average(combined_timings[key]) for key in combined_timings.keys()}
                 std = {key : numpy.std(combined_timings[key]) for key in combined_timings.keys()}
                 for key in combined_timings.keys():
-                    print key + " -> average = " + str(average[key]) + ", std = " + str(std[key]) + ", timings = " + str(combined_timings[key])
+                    print str(key) + " -> average = " + str(average[key]) + ", std = " + str(std[key]) + ", timings = " + str(combined_timings[key])
             elif (command == "summary"):
                 combined_timings = {}
                 for key in self.timings["donatello"].keys():
@@ -63,7 +68,7 @@ class TimingsListener(object):
                 average = {key : numpy.average(combined_timings[key]) for key in combined_timings.keys()}
                 std = {key : numpy.std(combined_timings[key]) for key in combined_timings.keys()}
                 for key in combined_timings.keys():
-                    print key + " -> average = " + str(average[key]) + ", std = " + str(std[key]) + ", timings = " + str(combined_timings[key])
+                    print str(key) + " -> average = " + str(average[key]) + ", std = " + str(std[key]) + ", timings = " + str(combined_timings[key])
             else:
                 combined_timings = {}
                 for key in self.timings["donatello"].keys():
@@ -72,7 +77,7 @@ class TimingsListener(object):
                 std = {key : numpy.std(combined_timings[key]) for key in combined_timings.keys()}
                 try:
                     key = tuple(command.split(","))
-                    print key + " -> average = " + str(average[key]) + ", std = " + str(std[key]) + ", timings = " + str(combined_timings[key])
+                    print str(key) + " -> average = " + str(average[key]) + ", std = " + str(std[key]) + ", timings = " + str(combined_timings[key])
                 except:
                     print "ILLEGAL COMMAND!!"
     
