@@ -38,6 +38,13 @@ class Waiter(MultiNavigator):
             pr2_host = "localhost"
         self.listen_to_pr2_client = SimpleClient(host = pr2_host, port = 12345) # "pr2mm1.csail.mit.edu"
         
+        self.goToPose(ROOM1_HALLWAY[0], ROOM1_HALLWAY[1])
+        
+        if (self.name == "donatello"):
+            self.goToPose(KITCHEN1[0], KITCHEN1[1])
+        else:
+            self.goToPose(KITCHEN2[0], KITCHEN2[1])
+
         #self.eventLoop()
 
     def eventLoop(self):
@@ -268,7 +275,7 @@ if __name__=="__main__":
     rospy.init_node("waiter_"+name)
     waiter = Waiter(name)
     raw_input("Hit enter to start...")
-    #waiter.eventLoop()
+    waiter.eventLoop()
 
     
     

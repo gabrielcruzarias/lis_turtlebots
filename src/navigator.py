@@ -46,7 +46,7 @@ class Navigator(TurtlebotWithAR):
         self.goal.target_pose.header.stamp.secs = rospy.get_time()
 
         self.goal.target_pose.pose.position.x = position.x; self.goal.target_pose.pose.position.y = position.y
-        self.goal.target_pose.pose.orientation.z = orientation[0]; self.goal.target_pose.pose.orientation.w = orientation[1]
+        self.goal.target_pose.pose.orientation.z = orientation.z; self.goal.target_pose.pose.orientation.w = orientation.w
         self.nav.send_goal(self.goal)
         self.nav.wait_for_result(rospy.Duration.from_sec(5.0)) # Does this line do anything?
 
