@@ -38,6 +38,9 @@ class WaiterTimings(Waiter):
             self.goToPose(KITCHEN2[0], KITCHEN2[1])
     
         while True:
+            action_index = random.randint(0, len(self.possible_actions[self.location]) - 1)
+            self.action = self.possible_actions[self.location][action_index]
+            
             t = time.time()
             loc = self.location
             if (self.action == "GO_TO_ROOM1"):
@@ -51,9 +54,7 @@ class WaiterTimings(Waiter):
             elif (self.action == "GO_TO_AFTER_PR2"):
                 self.goToAfterPR2()
             self.addTiming(t, loc)
-            action_index = random.randint(0, len(self.possible_actions[self.location]) - 1)
-            self.action = self.possible_actions[self.location][action_index]
-        
+            
     def addTiming(self, t, loc):
         delta_t = time.time() - t
         self.timings[(loc, self.location)].append(delta_t)
