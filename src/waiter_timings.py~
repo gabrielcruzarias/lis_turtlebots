@@ -40,6 +40,7 @@ class WaiterTimings(Waiter):
         while True:
             action_index = random.randint(0, len(self.possible_actions[self.location]) - 1)
             self.action = self.possible_actions[self.location][action_index]
+            
             t = time.time()
             loc = self.location
             if (self.action == "GO_TO_ROOM1"):
