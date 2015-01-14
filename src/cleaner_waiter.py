@@ -22,7 +22,7 @@ class Waiter(MultiNavigator):
     DRINKS_ORDERS_LIMIT = {"room1" : 2, "room2" : 2, "room3" : 2}
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_ROOM1", debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "WAIT_IN_KITCHEN", debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
@@ -38,12 +38,12 @@ class Waiter(MultiNavigator):
             pr2_host = "localhost"
         self.listen_to_pr2_client = SimpleClient(host = pr2_host, port = 12345) # "pr2mm1.csail.mit.edu"
         
-        self.goToPose(ROOM1_HALLWAY[0], ROOM1_HALLWAY[1])
+        #self.goToPose(ROOM1_HALLWAY[0], ROOM1_HALLWAY[1])
         
-        if (self.name == "donatello"):
-            self.goToPose(KITCHEN1[0], KITCHEN1[1])
-        else:
-            self.goToPose(KITCHEN2[0], KITCHEN2[1])
+        #if (self.name == "donatello"):
+        #    self.goToPose(KITCHEN1[0], KITCHEN1[1])
+        #else:
+        #    self.goToPose(KITCHEN2[0], KITCHEN2[1])
 
         #self.eventLoop()
 
@@ -79,7 +79,7 @@ class Waiter(MultiNavigator):
                 #self.state = self.APPROACHING_PR2
             elif (self.action == "GET_DRINK"):
                 self.getDrink()
-                self.action = "GO_TO_ROOM3"
+                self.action = "GO_TO_ROOM2"
                 #self.transitionToNextState(obs) # GO_TO_ROOM
                 #self.approach()
                 #self.send_msg_to_pr2("turtle in place position")
@@ -99,41 +99,44 @@ class Waiter(MultiNavigator):
     
     def goToRoom1(self):
         # initial position = room1, room2, room3, kitchen, or pr2
+        rospy.loginfo("Going to room1...")
         if (True):
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room1")])
         else:
             raw_input("Hit enter to go to room 1...")
         self.location = "room1"
-        #self.deliverDrinks()
-        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        #self.getOrders()
-        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        self.deliverDrinks()
+        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        self.getOrders()
+        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         
         
     def goToRoom2(self):
         # initial position = room1, room2, room3, kitchen, or pr2
+        rospy.loginfo("Going to room2...")
         if (True):
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room2")])
         else:
             raw_input("Hit enter to go to room 2...")
         self.location = "room2"
-        #self.deliverDrinks()
-        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        #self.getOrders()
-        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        self.deliverDrinks()
+        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        self.getOrders()
+        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
     
     
     def goToRoom3(self):
         # initial position = room1, room2, room3, kitchen, or pr2
+        rospy.loginfo("Going to room3...")
         if (True):
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room3")])
         else:
             raw_input("Hit enter to go to room 3...")
         self.location = "room3"
-        #self.deliverDrinks()
-        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        #self.getOrders()
-        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        self.deliverDrinks()
+        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        self.getOrders()
+        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         
     
     def goToKitchen(self):
@@ -146,7 +149,7 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to the kitchen...")
         self.location = "kitchen"
-        #self.listenToPR2()
+        self.listenToPR2()
     
     def waitInKitchen(self):
         self.wait_until_msg_is("pr2 ready to place can")
@@ -160,6 +163,7 @@ class Waiter(MultiNavigator):
             #self.turn()
         else:
             raw_input("Hit enter to approach PR2...")
+        self.location = "pr2"
         self.send_msg_to_pr2("turtle in place position")
         if (not self.debug):
             self.turn()
@@ -170,7 +174,12 @@ class Waiter(MultiNavigator):
             self.move(0.5, 0.25)
         else:
             raw_input("Hit enter to leave PR2...")
+            
         self.send_msg_to_pr2("turtle left pr2")
+        
+        if (not self.debug):
+            self.wayposeNavigation(PATH_WAYPOSES[(self.location, "after_pr2")])
+        self.location = "after_pr2"
         
     def goToAfterPR2(self):
         self.wayposeNavigation(PATH_WAYPOSES[(self.location, "after_pr2")])

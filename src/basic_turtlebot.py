@@ -34,7 +34,7 @@ class Turtlebot(object):
         self.setVelocity(0, 0)
 
     # Turns the turtlebot "angle" radians at "angular_velocity" rad/s
-    def turn(self, angle, angular_velocity = None):
+    def turn(self, angle = math.pi / 2, angular_velocity = None):
         if (self.debug):
             raw_input("Hit enter to turn " + str(angle) + " radians with angular velocity of " + str(angular_velocity) + " rad/s...")
             return
