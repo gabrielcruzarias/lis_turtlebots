@@ -22,7 +22,7 @@ class Waiter(MultiNavigator):
     DRINKS_ORDERS_LIMIT = {"room1" : 2, "room2" : 2, "room3" : 2}
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
     
-    def __init__(self, name, start_location = "after_pr2", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_KITCHEN", debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "after_pr2", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_KITCHEN", debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
