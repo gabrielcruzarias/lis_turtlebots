@@ -26,6 +26,7 @@ PR2 = (Point(1.1, -0.49), Orientation(0.801, 0.598))
 ROOM1_ENTRANCE = (Point(-2, 0.05), Orientation(1, 0))
 ROOM1_EXIT = (Point(-2, -0.44), Orientation(0, 1))
 ROOM1_HALLWAY = (Point(-1.33, 0.16), Orientation(-0.281, 0.960))
+#ROOM1_SPECIAL = (Point(), Orientation())
 
 ROOM2_ENTRANCE = (Point(-1.88, 3.60), Orientation(1, 0))
 ROOM2_EXIT = (Point(-1.95, 2.57), Orientation(-0.646, 0.763))
