@@ -23,19 +23,24 @@ AFTER_PR2 = (Point(0.03, 0.57), Orientation(1, 0))
 
 PR2 = (Point(1.1, -0.49), Orientation(0.801, 0.598))
 
-ROOM1_ENTRANCE = (Point(-1.93, 0.05), Orientation(1, 0))
-ROOM1_EXIT = (Point(-1.93, -0.44), Orientation(0, 1))
-ROOM1_HALLWAY = (Point(-1.33, 0.16), Orientation(-0.281, 0.960))
-ROOM1_SPECIAL = (Point(-2.26, 1.50), Orientation(-0.68, 0.73))
+ROOM1_ENTRANCE_KITCHEN = (Point(-0.65, 0.02), Orientation(1, 0))
+ROOM1_ENTRANCE_OTHER_ROOMS = (Point(-1.74, 0.3), Orientation(-0.707, 0.707))
+ROOM1_EXIT = (Point(-0.65, 0.02), Orientation(0, 1))
+#ROOM1_HALLWAY = (Point(-1.33, 0.16), Orientation(-0.281, 0.960))
+#ROOM1_SPECIAL = (Point(-2.26, 1.50), Orientation(-0.68, 0.73))
+ROOM1_ROOM2 = (Point(-1.42, 1.07), Orientation(0.707, 0.707))
 
-ROOM2_ENTRANCE = (Point(-1.82, 3.60), Orientation(1, 0))
-ROOM2_EXIT = (Point(-1.89, 2.57), Orientation(-0.646, 0.763))
-ROOM2_HALLWAY = (Point(-1.35, 3.32), Orientation(0.702, 0.712))
+ROOM2_ENTRANCE_KITCHEN = (Point(-1.35, 3.32), Orientation(1, 0)) # Entrance to room2 coming from kitchen
+ROOM2_ENTRANCE_ROOM3 = (Point(-1.8, 3.44), Orientation(-0.707, 0.707))
+ROOM2_EXIT = (Point(-1.95, 2.15), Orientation(-0.707, 0.707))
+ROOM2_HALLWAY = (Point(-1.35, 3.32), Orientation(0.707, 0.707))
+#ROOM2_ROOM1 = (Point(-2.26, 1.50), Orientation(-0.68, 0.73))
+ROOM2_ROOM3 = (Point(-1.17, 4.44), Orientation(0.707, 0.707))
 
-ROOM3_ENTRANCE = (Point(-2.05, 6.67), Orientation(1, 0))
-ROOM3_EXIT = (Point(-1.91, 5.53), Orientation(-0.640, 0.769))
+ROOM3_ENTRANCE = (Point(-1.37, 6.61), Orientation(1, 0))
+ROOM3_EXIT = (Point(-1.83, 5.65), Orientation(-0.707, 0.707))
 ROOM3_HALLWAY = (Point(-1.21, 6.02), Orientation(0.828, 0.560)) #x,y = -1.53, 6.77
-
+#ROOM3_ROOM2 = (Point(), Orientation())
 
 # PATHS
 PATH_WAYPOSES = {}

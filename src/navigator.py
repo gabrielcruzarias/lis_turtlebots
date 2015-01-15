@@ -14,9 +14,11 @@ import actionlib
 from basic_turtlebot import *
 from turtlebot_with_ar import *
 from point import *
+from orientation import *
+
 
 class Navigator(TurtlebotWithAR):
-    def __init__(self, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         TurtlebotWithAR.__init__(self, debug, default_velocity, default_angular_velocity)
         if (not debug):
             self.nav = actionlib.SimpleActionClient("move_base", MoveBaseAction)
@@ -95,7 +97,7 @@ if __name__=="__main__":
         elif (command == "navigate"):
             (x, y) = [float(coordinate) for coordinate in raw_input("Enter goal position (as x,y): ").split(",")]
             (z, w) = [float(coordinate) for coordinate in raw_input("Enter goal orientation (as z,w): ").split(",")]
-            navigator.goToPose(Point(x, y), (z, w))
+            navigator.goToPose(Point(x, y), Orientation(z, w))
         elif (command == "show_variables"):
             print "Default velocity =", navigator.default_velocity
             print "Default angular velocity =", navigator.default_angular_velocity
