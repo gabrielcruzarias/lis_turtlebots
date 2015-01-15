@@ -44,9 +44,10 @@ class MultiNavigator(Navigator):
         self.goToPose(wayposes[-1][0], wayposes[-1][1])
         
     # Send message to the waypoints server to reserve next waypoint. Called right before publishing that waypoint as the next navigation goal.
-    def reserveWaypoint(self, point):j
+    def reserveWaypoint(self, point):
         if (not self.multiagent):
             return
+            
         print "Reserving waypoint " + str(point)
         self.waypoint_request.broadcast("reserve," + str(point.x) + "," + str(point.y))
         #print "Waypoint server received reservation request"
@@ -58,6 +59,7 @@ class MultiNavigator(Navigator):
     def releaseWaypoint(self, point):
         if (not self.multiagent):
             return
+            
         if (point != None):
             print "Releasing waypoint " + str(point)
             self.waypoint_request.broadcast("release," + str(point.x) + "," + str(point.y))

@@ -22,9 +22,10 @@ class MultiNavigator(Navigator):
         self.last_reserved_location = None
         self.multiagent = False
         
-        # Create request server and response clients to communicate with waypoints_server
-        self.waypoint_request = SimpleServer(port = self.request_ports[name], threading = False)
-        self.waypoint_response = SimpleClient(host = self.waypoints_host, port = self.response_ports[name])
+        if (self.multiagent):
+            # Create request server and response clients to communicate with waypoints_server
+            self.waypoint_request = SimpleServer(port = self.request_ports[name], threading = False)
+            self.waypoint_response = SimpleClient(host = self.waypoints_host, port = self.response_ports[name])
         
         # Subscribe to /amcl_pose topic to use to cancel the waypoints goals when the robot is close enough to avoid
         # spending time getting the orientation and position perfectly (we only care about passing close to the waypoint)
@@ -43,7 +44,7 @@ class MultiNavigator(Navigator):
         self.goToPose(wayposes[-1][0], wayposes[-1][1])
         
     # Send message to the waypoints server to reserve next waypoint. Called right before publishing that waypoint as the next navigation goal.
-    def reserveWaypoint(self, point):j
+    def reserveWaypoint(self, point):
         if (not self.multiagent):
             return
         print "Reserving waypoint " + str(point)
@@ -57,6 +58,7 @@ class MultiNavigator(Navigator):
     def releaseWaypoint(self, point):
         if (not self.multiagent):
             return
+            
         if (point != None):
             print "Releasing waypoint " + str(point)
             self.waypoint_request.broadcast("release," + str(point.x) + "," + str(point.y))
