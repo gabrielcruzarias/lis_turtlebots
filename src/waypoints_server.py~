@@ -39,11 +39,11 @@ class WaypointsServer(object):
                     #    print self.reserved_waypoints[(x, y)] + " owns Point" + str((x, y)) + " at the moment. Waiting..."
                     #    dummy = False
                     time.sleep(0.3)
-                #print "Reserved waypoint Point" + str((x, y)) + " for " + client_name
+                print "Reserved waypoint Point" + str((x, y)) + " for " + client_name
                 self.reserved_waypoints[(x, y)] = client_name
                 self.client_responders[client_name].broadcast("granted," + str(x) + "," + str(y))
             else:
-                #print client_name + " released waypoint Point" + str((x, y))
+                print client_name + " released waypoint Point" + str((x, y))
                 self.reserved_waypoints.pop((x, y))
         
 

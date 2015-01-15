@@ -68,7 +68,7 @@ class TimingsListener(object):
                 average = {key : numpy.average(combined_timings[key]) for key in combined_timings.keys()}
                 std = {key : numpy.std(combined_timings[key]) for key in combined_timings.keys()}
                 for key in combined_timings.keys():
-                    print str(key) + " -> average = " + str(average[key]) + ", std = " + str(std[key]) + ", timings = " + str(combined_timings[key])
+                    print str(key) + " -> average = " + str(average[key]) + ", std = " + str(std[key])
             else:
                 combined_timings = {}
                 for key in self.timings["donatello"].keys():
