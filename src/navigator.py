@@ -38,7 +38,7 @@ class Navigator(TurtlebotWithAR):
     # Go to the specified pose without waiting for the turtlebot to reach it. Useful for waypoint navigation
     def publishGoal(self, position, orientation, frame = "map"):
         if (self.debug):
-            rospy.loginfo("Hit enter to publish the goal of (" + str(position) + "," + str(orientation) + ")...")
+            raw_input("Hit enter to publish the goal of (" + str(position) + "," + str(orientation) + ")...")
             return
     
         self.going_to_goal = True

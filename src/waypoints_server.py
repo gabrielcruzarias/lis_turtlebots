@@ -8,7 +8,7 @@ class WaypointsServer(object):
     client_ports = {"donatello" : 12348, "leonardo" : 12349}
     #client_hosts = {"donatello" : "10.68.0.171", "leonardo" : "10.68.0.175"}
     client_hosts = {"donatello" : "localhost", "leonardo" : "localhost"} # no robot testing
-    client_hosts = {"donatello" : "10.68.0.165", "leonardo" : "10.68.0.165"} # no robot testing
+    #client_hosts = {"donatello" : "10.68.0.165", "leonardo" : "10.68.0.165"} # no robot testing
     server_ports = {"donatello" : 12350, "leonardo" : 12351}
     def __init__(self):
         

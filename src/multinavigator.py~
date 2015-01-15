@@ -11,7 +11,7 @@ import time
 class MultiNavigator(Navigator):
     request_ports = {"donatello" : 12348, "leonardo" : 12349}
     response_ports = {"donatello" : 12350, "leonardo" : 12351}
-    waypoints_host = "10.68.0.171" #"10.68.0.165" #"localhost" #"10.68.0.171"
+    waypoints_host = "localhost" #"10.68.0.171" #"10.68.0.165" #"localhost" #"10.68.0.171"
     DISTANCE_TOLERANCE = 0.55 # When the robot is within this distance of a waypoint, we publish a new goal (to make the path smoother)
     
     def __init__(self, name, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
@@ -20,7 +20,7 @@ class MultiNavigator(Navigator):
         self.position = Point(0, 0)
         self.angle = 0
         self.last_reserved_location = None
-        self.multiagent = False
+        self.multiagent = True
         
         if (self.multiagent):
             # Create request server and response clients to communicate with waypoints_server
@@ -34,19 +34,22 @@ class MultiNavigator(Navigator):
         
     # Navigate to a goal location passing through a list of waypoints, always waiting until the next waypoint to be free
     def wayposeNavigation(self, wayposes):
-        for (point, orientation) in wayposes[:-1]:
+        for (point, orientation) in wayposes:
             self.reserveWaypoint(point)
-            self.publishGoal(point, orientation)
+            if ((point, orientation) != wayposes[-1]):
+                self.publishGoal(point, orientation)
+                self.waitUntilCloseToGoal(point)
+            else:
+                self.goToPose(point, orientation)
             #raw_input("Go to " + str(point) + "...")
-            self.waitUntilCloseToGoal(point)
             self.releaseWaypoint(self.last_reserved_location)
             self.last_reserved_location = point
-        self.goToPose(wayposes[-1][0], wayposes[-1][1])
         
     # Send message to the waypoints server to reserve next waypoint. Called right before publishing that waypoint as the next navigation goal.
     def reserveWaypoint(self, point):
         if (not self.multiagent):
             return
+            
         print "Reserving waypoint " + str(point)
         self.waypoint_request.broadcast("reserve," + str(point.x) + "," + str(point.y))
         #print "Waypoint server received reservation request"
