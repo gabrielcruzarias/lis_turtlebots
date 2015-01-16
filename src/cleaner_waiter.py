@@ -102,7 +102,9 @@ class Waiter(MultiNavigator):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room1...")
         if (True):
-            if (self.location == "kitchen"):
+            if (self.location == "room1"):
+                self.turn(math.pi / 2)
+            elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
                 self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room1")])
         else:
@@ -118,7 +120,9 @@ class Waiter(MultiNavigator):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room2...")
         if (True):
-            if (self.location == "kitchen"):
+            if (self.location == "room1"):
+                self.turn(math.pi / 2)
+            elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
                 self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room2")])
         else:
@@ -134,7 +138,9 @@ class Waiter(MultiNavigator):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room3...")
         if (True):
-            if (self.location == "kitchen"):
+            if (self.location == "room1"):
+                self.turn(math.pi / 2)
+            elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
                 self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room3")])
         else:
@@ -149,6 +155,11 @@ class Waiter(MultiNavigator):
     def goToKitchen(self):
         # initial position = room1, room2, room3, kitchen, or pr2
         if (True):
+            if (self.location == "room1"):
+                self.turn(math.pi / 2)
+            elif (self.location == "room2" or self.location == "room3"):
+                self.turn(5/6. * math.pi)
+            
             if (self.name == "donatello"):
                 self.wayposeNavigation(PATH_WAYPOSES[(self.location, "kitchen1")])
             elif (self.name == "leonardo"):
