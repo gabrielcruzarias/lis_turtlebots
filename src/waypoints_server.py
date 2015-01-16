@@ -32,6 +32,7 @@ class WaypointsServer(object):
     def loop(self, client_name):
         while (not self.stop):
             (command, x, y) = self.client_requesters[client_name].get_message().split(",")
+            t = time.time()
             if (command == "reserve"):
                 #print client_name + " is reserving waypoint Point" + str((x, y))
                 #dummy = True
@@ -40,9 +41,9 @@ class WaypointsServer(object):
                     #    print self.reserved_waypoints[(x, y)] + " owns Point" + str((x, y)) + " at the moment. Waiting..."
                     #    dummy = False
                     time.sleep(0.3)
-                print "Reserved waypoint Point" + str((x, y)) + " for " + client_name
                 self.reserved_waypoints[(x, y)] = client_name
                 self.client_responders[client_name].broadcast("granted," + str(x) + "," + str(y))
+                print "Reserved waypoint Point" + str((x, y)) + " for " + client_name + ", waited for " + str(time.time() - t)
             else:
                 print client_name + " released waypoint Point" + str((x, y))
                 self.reserved_waypoints.pop((x, y))

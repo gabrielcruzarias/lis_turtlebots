@@ -51,11 +51,12 @@ class MultiNavigator(Navigator):
             return
             
         print "Reserving waypoint " + str(point)
+        t = time.time()
         self.waypoint_request.broadcast("reserve," + str(point.x) + "," + str(point.y))
         #print "Waypoint server received reservation request"
         # The waypoints_server is only going to send an accept response. If the waypoint requested is already reserved, the server will wait until it's released to send a response.
         self.waypoint_response.get_message()
-        print "Granted waypoint " + str(point)
+        print "Granted waypoint " + str(point) + + ", waited for " + str(time.time() - t)
         
     # Send message to the waypoints server to release previous waypoint. Called after the next waypoint is reached.
     def releaseWaypoint(self, point):
@@ -64,8 +65,9 @@ class MultiNavigator(Navigator):
             
         if (point != None):
             print "Releasing waypoint " + str(point)
+            t = time.time()
             self.waypoint_request.broadcast("release," + str(point.x) + "," + str(point.y))
-            print "Waypoint server received release request"
+            print "Waypoint server received release request, waited for " + str(time.time() - t)
     
     # Wait until the robot's location is within self.DISTANCE_TOLERANCE of point. Used to cancel a waypoint
     # once the robot is close to it so that it doesn't lose time trying to get the specified orientation.

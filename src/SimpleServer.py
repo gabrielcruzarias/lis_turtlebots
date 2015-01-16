@@ -1,5 +1,6 @@
 import socket
 from threading import Thread
+import time
 
 class SimpleClient:
   def __init__(self, host="localhost", port=12346): #pr2mm1.csail.mit.edu
@@ -8,11 +9,14 @@ class SimpleClient:
     self.message_received = "NONE"
 
   def get_message(self):
-    self.s = socket.socket()         # Create a socket object
-    self.s.connect((self.host, self.port))
-    self.message_received = self.s.recv(1024)
-    self.s.close                     # Close the socket when done
-    return self.message_received
+    try:
+      self.s = socket.socket()         # Create a socket object
+      self.s.connect((self.host, self.port))
+      self.message_received = self.s.recv(1024)
+      self.s.close                     # Close the socket when done
+      return self.message_received
+    except:
+      time.sleep(1)
   
   
 class SimpleServer:

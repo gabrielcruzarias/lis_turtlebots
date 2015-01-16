@@ -31,7 +31,7 @@ ROOM1_EXIT = (Point(-0.65, 0.02), Orientation(0, 1))
 #ROOM1_SPECIAL = (Point(-2.26, 1.50), Orientation(-0.68, 0.73))
 ROOM1_ROOM2 = (Point(-1.42, 1.07), Orientation(0.707, 0.707))
 
-ROOM2_ENTRANCE_KITCHEN = (Point(-1.35, 3.32), Orientation(1, 0)) # Entrance to room2 coming from kitchen
+ROOM2_ENTRANCE_KITCHEN = (Point(-1.35, 3.25), Orientation(1, 0)) # Entrance to room2 coming from kitchen
 ROOM2_ENTRANCE_ROOM3 = (Point(-1.8, 3.44), Orientation(-0.707, 0.707))
 ROOM2_EXIT = (Point(-1.95, 2.15), Orientation(-0.707, 0.707))
 ROOM2_HALLWAY = (Point(-1.35, 3.32), Orientation(0.707, 0.707))
