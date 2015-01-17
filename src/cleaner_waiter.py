@@ -22,7 +22,7 @@ class Waiter(MultiNavigator):
     DRINKS_ORDERS_LIMIT = {"room1" : 2, "room2" : 2, "room3" : 2}
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
     
-    def __init__(self, name, start_location = "after_pr2", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_KITCHEN", debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "after_pr2", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_KITCHEN", debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
@@ -34,8 +34,8 @@ class Waiter(MultiNavigator):
         
         self.talk_to_pr2_server = SimpleServer(port = self.waiter_ports[name], threading = True)
         pr2_host = "pr2mm1.csail.mit.edu"
-        if (self.debug):
-            pr2_host = "localhost"
+        #if (self.debug):
+        #    pr2_host = "localhost"
         self.listen_to_pr2_client = SimpleClient(host = pr2_host, port = 12345) # "pr2mm1.csail.mit.edu"
         
         #self.goToPose(ROOM1_HALLWAY[0], ROOM1_HALLWAY[1])
@@ -64,7 +64,7 @@ class Waiter(MultiNavigator):
                 #self.transitionToNextState(obs) # GO_TO_KITCHEN, GO_TO_ROOM
             elif (self.action == "GO_TO_KITCHEN"):
                 self.goToKitchen()
-                self.action = "WAIT_IN_KITCHEN"
+                self.action = "GET_DRINK"
                 #self.transitionToNextState(obs) # WAIT_IN_KITCHEN, GO_TO_ROOM
             elif (self.action == "WAIT_IN_KITCHEN"):
                 obs = self.waitInKitchen()
@@ -101,7 +101,7 @@ class Waiter(MultiNavigator):
     def goToRoom1(self):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room1...")
-        if (True):
+        if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
@@ -120,7 +120,7 @@ class Waiter(MultiNavigator):
     def goToRoom2(self):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room2...")
-        if (True):
+        if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
@@ -140,7 +140,7 @@ class Waiter(MultiNavigator):
     def goToRoom3(self):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room3...")
-        if (True):
+        if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
@@ -158,7 +158,7 @@ class Waiter(MultiNavigator):
     
     def goToKitchen(self):
         # initial position = room1, room2, room3, kitchen, or pr2
-        if (True):
+        if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "room2" or self.location == "room3"):
@@ -177,7 +177,7 @@ class Waiter(MultiNavigator):
     def waitInKitchen(self):
         #self.wait_until_msg_is("pr2 ready to place can")
         self.send_msg_to_pr2("can i come")
-        return self.wait_until_msg_is("serving_turtlebot: come")
+        return self.wait_until_msg_is("serving_turtlebot: come " + self.name)
         
     
     def getDrink(self):
