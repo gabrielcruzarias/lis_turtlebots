@@ -23,9 +23,9 @@ class Waiter(MultiNavigator):
     DRINKS_ORDERS_LIMIT = {"room1" : 2, "room2" : 2, "room3" : 2}
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
     LOCATION_MAPPING = {"room1" : LOC.R1, "room2" : LOC.R2, "room3" : LOC.R3, "kitchen" : LOC.KITCHEN, "after_pr2" : LOC.KITCHEN}
-    PR2_MSG_MAPPING = {"not_serving" : PR2.NOT_READY, "drink_in_hand" : PR2.INHAND, "serving_turtlebot" : PR2.SOMEONE, "no_obs" : PR2.NO_OBS}
+    PR2_MSG_MAPPING = {"not_serving" : PR2.NOT_READY, "drink_in_hand" : PR2.INHAND, "serving_turtlebot" : PR2.SOMEONE, "no_obs" : PR2.NOT_READY}
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
@@ -101,7 +101,7 @@ class Waiter(MultiNavigator):
     ################################### MACRO-ACTIONS ###################################
     #####################################################################################
     
-    def goToRoom1(self):
+    def goToRoom1(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room1...")
         if (not self.debug):
@@ -113,6 +113,10 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to room 1...")
         self.location = "room1"
+        
+        if (ignore_drinks):
+            return
+        
         self.deliverDrinks()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         num_drinks = self.getOrders()
@@ -120,7 +124,7 @@ class Waiter(MultiNavigator):
         return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
         
         
-    def goToRoom2(self):
+    def goToRoom2(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room2...")
         if (not self.debug):
@@ -132,7 +136,11 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to room 2...")
         self.location = "room2"
-        orders = self.deliverDrinks()
+        
+        if (ignore_drinks):
+            return
+        
+        self.deliverDrinks()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         num_drinks = self.getOrders()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
@@ -140,7 +148,7 @@ class Waiter(MultiNavigator):
         
     
     
-    def goToRoom3(self):
+    def goToRoom3(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room3...")
         if (not self.debug):
@@ -152,6 +160,10 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to room 3...")
         self.location = "room3"
+        
+        if (ignore_drinks):
+            return
+        
         self.deliverDrinks()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         num_drinks = self.getOrders()
@@ -159,7 +171,7 @@ class Waiter(MultiNavigator):
         return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
         
     
-    def goToKitchen(self):
+    def goToKitchen(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         if (not self.debug):
             if (self.location == "room1"):
@@ -174,7 +186,11 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to the kitchen...")
         self.location = "kitchen"
-        (pr2_msg, pr2_msg_extra) = self.listenToPR2().split(":")[0]
+        
+        if (ignore_drinks):
+            return
+        
+        (pr2_msg, pr2_msg_extra) = self.listenToPR2().split(":")
         if (pr2_msg_extra == " waiting_for_turtlebot"):
             pr2_msg = "drink_in_hand"
         return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
@@ -210,7 +226,7 @@ class Waiter(MultiNavigator):
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "after_pr2")])
         self.location = "after_pr2"
         
-        (pr2_msg, pr2_msg_extra) = self.listenToPR2().split(":")[0]
+        (pr2_msg, pr2_msg_extra) = self.listenToPR2().split(":")
         if (pr2_msg_extra == " waiting_for_turtlebot"):
             pr2_msg = "drink_in_hand"
         

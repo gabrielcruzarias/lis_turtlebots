@@ -26,8 +26,8 @@ class HOLD(ObservationType):
     num = 2
 
 class PR2:
-    SOMEONE, INHAND, NOT_READY, NO_OBS = range(4)
-    num = 4
+    SOMEONE, INHAND, NOT_READY = range(3)
+    num = 3
 
 class Observations:
     def __init__(self):
@@ -45,6 +45,7 @@ class Observations:
 
 
     def lookup(self, obs):
+        obs = [int(o) for o in obs]
         idx = np.dot(self.lookup_dot_vect,  np.array(obs) )
         assert (idx >= 0 and idx < self.total_obs)
         return idx

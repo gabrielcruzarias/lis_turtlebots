@@ -65,8 +65,9 @@ class MultiNavigator(Navigator):
             
         if (point != None):
             print "Releasing waypoint " + str(point)
+            t = time.time()
             self.waypoint_request.broadcast("release," + str(point.x) + "," + str(point.y))
-            print "Waypoint server received release request"
+            print "Waypoint server received release request, waited for " + str(time.time() - t)
     
     # Wait until the robot's location is within self.DISTANCE_TOLERANCE of point. Used to cancel a waypoint
     # once the robot is close to it so that it doesn't lose time trying to get the specified orientation.

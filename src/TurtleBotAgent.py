@@ -2,6 +2,9 @@
 # Author: Ariel Anders
 # Domain classes for beerbots
 
+import rospy
+import roslib
+roslib.load_manifest('lis_turtlebots')
 from BeerBotDomain import AGENTS, ACTIONS, LOC, ORDERS, HOLD, PR2
 from cleaner_waiter import Waiter
 from Controller import Agent, Controller
@@ -11,7 +14,7 @@ from Controller import Agent, Controller
 class TurtleAgent(Agent):
     def __init__(self, name):
         self.turtle_ctrl = Waiter(name)
-        self.num = name == "leonardo"
+        self.num = int(name == "leonardo")
 
     def do_action(self, action):
 
@@ -49,10 +52,10 @@ if __name__=="__main__":
         name = "donatello"
     rospy.init_node("waiter_"+name)
     rospy.loginfo("starting waiter with turtle %s " % name)
-    waiter = Waiter(name)
-    ctrl = Controller(waiter)
+    agent = TurtleAgent(name)
+    ctrl = Controller(agent)
 
     raw_input("Hit enter to start...")
-    ctrl.run(0, [0,0,0,0], True)
+    ctrl.run(0, [3,0,0,2], True)
 
     
