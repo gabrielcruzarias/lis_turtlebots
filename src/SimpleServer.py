@@ -16,7 +16,7 @@ class SimpleClient:
       self.s.close                     # Close the socket when done
       return self.message_received
     except:
-      time.sleep(1)
+      time.sleep(0.5)
   
   
 class SimpleServer:

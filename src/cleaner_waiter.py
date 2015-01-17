@@ -16,11 +16,14 @@ import time
 from SimpleServer import *
 from multinavigator import *
 from waiter_locations import *
+from BeerBotDomain import *
 
 class Waiter(MultiNavigator):
     waiter_ports = {"donatello" : 12346, "leonardo" : 12347}
     DRINKS_ORDERS_LIMIT = {"room1" : 2, "room2" : 2, "room3" : 2}
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
+    LOCATION_MAPPING = {"room1" : LOC.R1, "room2" : LOC.R2, "room3" : LOC.R3, "kitchen" : LOC.KITCHEN, "after_pr2" : LOC.KITCHEN}
+    PR2_MSG_MAPPING = {"not_serving" : PR2.NOT_READY, "drink_in_hand" : PR2.INHAND, "serving_turtlebot" : PR2.SOMEONE, "no_obs" : PR2.NO_OBS}
     
     def __init__(self, name, start_location = "after_pr2", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = "GO_TO_KITCHEN", debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
@@ -112,9 +115,9 @@ class Waiter(MultiNavigator):
         self.location = "room1"
         self.deliverDrinks()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        self.getOrders()
+        num_drinks = self.getOrders()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        return (self.location, self.drinks_on_turtlebot, self.drinks_ordered, None)
+        return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
         
         
     def goToRoom2(self):
@@ -129,11 +132,11 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to room 2...")
         self.location = "room2"
-        self.deliverDrinks()
+        orders = self.deliverDrinks()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        self.getOrders()
+        num_drinks = self.getOrders()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        return (self.location, self.drinks_on_turtlebot, self.drinks_ordered, None)
+        return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
         
     
     
@@ -151,9 +154,9 @@ class Waiter(MultiNavigator):
         self.location = "room3"
         self.deliverDrinks()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        self.getOrders()
+        num_drinks = self.getOrders()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        return (self.location, self.drinks_on_turtlebot, self.drinks_ordered, None)
+        return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
         
     
     def goToKitchen(self):
@@ -171,8 +174,10 @@ class Waiter(MultiNavigator):
         else:
             raw_input("Hit enter to go to the kitchen...")
         self.location = "kitchen"
-        pr2_msg = self.listenToPR2().split(":")[0]
-        return (self.location, self.drinks_on_turtlebot, self.drinks_ordered, pr2_msg)
+        (pr2_msg, pr2_msg_extra) = self.listenToPR2().split(":")[0]
+        if (pr2_msg_extra == " waiting_for_turtlebot"):
+            pr2_msg = "drink_in_hand"
+        return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
     
     def waitInKitchen(self):
         #self.wait_until_msg_is("pr2 ready to place can")
@@ -204,7 +209,12 @@ class Waiter(MultiNavigator):
         if (not self.debug):
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "after_pr2")])
         self.location = "after_pr2"
-        return (self.location, self.drinks_on_turtlebot, self.drinks_ordered, None)
+        
+        (pr2_msg, pr2_msg_extra) = self.listenToPR2().split(":")[0]
+        if (pr2_msg_extra == " waiting_for_turtlebot"):
+            pr2_msg = "drink_in_hand"
+        
+        return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
         
         
     def goToAfterPR2(self):
@@ -275,6 +285,7 @@ class Waiter(MultiNavigator):
         drinks_to_add = min(self.DRINKS_ORDERS_LIMIT[self.location] - open_drinks, ordered_drinks)
         if (drinks_to_add > 0):
             self.drinks_ordered[self.location].append([drinks_to_add, time.time()])
+        return ordered_drinks
         #room_number = int(self.location[-1]) # self.location = "roomX" -> X = int(self.location[-1])
         #self.drinks_ordered[room_number] += 1
     
