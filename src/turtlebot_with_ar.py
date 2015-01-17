@@ -43,7 +43,7 @@ class TurtlebotWithAR(Turtlebot):
         return "obj_found"
 
     # Move until turtlebot is "desired_distance" meters away from the AR tag
-    def approach(self, desired_distance = 0.45):
+    def approach(self, desired_distance = 0.55):
         distance = math.sqrt(self.obj_x**2 + self.obj_y**2)
         t = time.time()
         while (distance > desired_distance):
