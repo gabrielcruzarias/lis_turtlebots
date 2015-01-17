@@ -30,7 +30,7 @@ class WaiterTimings(Waiter):
     
     def gatherTimings(self):
     
-        self.goToPose(ROOM1_HALLWAY[0], ROOM1_HALLWAY[1])
+        self.goToPose(ROOM1_EXIT[0], ROOM1_EXIT[1])
         
         if (self.name == "donatello"):
             self.goToPose(KITCHEN1[0], KITCHEN1[1])

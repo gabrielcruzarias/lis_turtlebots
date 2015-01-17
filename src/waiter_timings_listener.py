@@ -44,8 +44,11 @@ class TimingsListener(object):
     
     def listen(self, name):
         while (not self.stop):
-            (loc0, loc1, delta_t) = self.listener[name].get_message().split(",")
-            self.timings[name][(loc0, loc1)].append(float(delta_t))
+            try:
+                (loc0, loc1, delta_t) = self.listener[name].get_message().split(",")
+                self.timings[name][(loc0, loc1)].append(float(delta_t))
+            except:
+                pass
     
     
     def loop(self):
