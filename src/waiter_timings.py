@@ -44,13 +44,13 @@ class WaiterTimings(Waiter):
             t = time.time()
             loc = self.location
             if (self.action == "GO_TO_ROOM1"):
-                self.goToRoom1()
+                self.goToRoom1(ignore_drinks = True)
             elif (self.action == "GO_TO_ROOM2"):
-                self.goToRoom2()
+                self.goToRoom2(ignore_drinks = True)
             elif (self.action == "GO_TO_ROOM3"):
-                self.goToRoom3()
+                self.goToRoom3(ignore_drinks = True)
             elif (self.action == "GO_TO_KITCHEN"):
-                self.goToKitchen()
+                self.goToKitchen(ignore_drinks = True)
             elif (self.action == "GO_TO_AFTER_PR2"):
                 self.goToAfterPR2()
             self.addTiming(t, loc)
