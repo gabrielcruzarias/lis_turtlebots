@@ -30,13 +30,15 @@ class WaiterTimings(Waiter):
     
     def gatherTimings(self):
     
-        self.goToPose(ROOM1_EXIT[0], ROOM1_EXIT[1])
+        self.goToPose(ROOM1_EXIT_KITCHEN[0], ROOM1_EXIT_KITCHEN[1])
         
         if (self.name == "donatello"):
             self.goToPose(KITCHEN1[0], KITCHEN1[1])
         else:
             self.goToPose(KITCHEN2[0], KITCHEN2[1])
-    
+        
+        raw_input("Hit enter to go...")
+        
         while True:
             action_index = random.randint(0, len(self.possible_actions[self.location]) - 1)
             self.action = self.possible_actions[self.location][action_index]
