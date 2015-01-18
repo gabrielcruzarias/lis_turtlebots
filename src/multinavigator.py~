@@ -36,11 +36,12 @@ class MultiNavigator(Navigator):
     def wayposeNavigation(self, wayposes):
         for (point, orientation) in wayposes:
             self.reserveWaypoint(point)
-            if ((point, orientation) != wayposes[-1]):
-                self.publishGoal(point, orientation)
-                self.waitUntilCloseToGoal(point)
-            else:
-                self.goToPose(point, orientation)
+            self.goToPose(point, orientation)
+            #if ((point, orientation) != wayposes[-1]):
+            #    self.publishGoal(point, orientation)
+            #    self.waitUntilCloseToGoal(point)
+            #else:
+            #    self.goToPose(point, orientation)
             #raw_input("Go to " + str(point) + "...")
             self.releaseWaypoint(self.last_reserved_location)
             self.last_reserved_location = point
