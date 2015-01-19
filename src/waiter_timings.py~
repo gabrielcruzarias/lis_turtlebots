@@ -36,7 +36,9 @@ class WaiterTimings(Waiter):
             self.goToPose(KITCHEN1[0], KITCHEN1[1])
         else:
             self.goToPose(KITCHEN2[0], KITCHEN2[1])
-    
+        
+        raw_input("Hit enter to go...")
+        
         while True:
             action_index = random.randint(0, len(self.possible_actions[self.location]) - 1)
             self.action = self.possible_actions[self.location][action_index]

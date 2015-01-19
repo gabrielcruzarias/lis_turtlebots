@@ -25,7 +25,7 @@ class Waiter(MultiNavigator):
     LOCATION_MAPPING = {"room1" : LOC.R1, "room2" : LOC.R2, "room3" : LOC.R3, "kitchen" : LOC.KITCHEN, "after_pr2" : LOC.KITCHEN}
     PR2_MSG_MAPPING = {"not_serving" : PR2.NOT_READY, "drink_in_hand" : PR2.INHAND, "serving_turtlebot" : PR2.SOMEONE, "no_obs" : PR2.NOT_READY}
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
@@ -104,14 +104,14 @@ class Waiter(MultiNavigator):
     def goToRoom1(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room1...")
-        if (not self.debug):
+        if (True): #not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
                 self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room1")])
-        else:
-            raw_input("Hit enter to go to room 1...")
+        #else:
+        #    raw_input("Hit enter to go to room 1...")
         self.location = "room1"
         
         if (ignore_drinks):
@@ -127,14 +127,14 @@ class Waiter(MultiNavigator):
     def goToRoom2(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room2...")
-        if (not self.debug):
+        if (True): #not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
                 self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room2")])
-        else:
-            raw_input("Hit enter to go to room 2...")
+        #else:
+        #    raw_input("Hit enter to go to room 2...")
         self.location = "room2"
         
         if (ignore_drinks):
@@ -151,14 +151,14 @@ class Waiter(MultiNavigator):
     def goToRoom3(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room3...")
-        if (not self.debug):
+        if (True): #not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
                 self.turn(5/6. * math.pi)
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "room3")])
-        else:
-            raw_input("Hit enter to go to room 3...")
+        #else:
+        #    raw_input("Hit enter to go to room 3...")
         self.location = "room3"
         
         if (ignore_drinks):
@@ -173,7 +173,7 @@ class Waiter(MultiNavigator):
     
     def goToKitchen(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
-        if (not self.debug):
+        if (True): #not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "room2" or self.location == "room3"):
@@ -183,8 +183,8 @@ class Waiter(MultiNavigator):
                 self.wayposeNavigation(PATH_WAYPOSES[(self.location, "kitchen1")])
             elif (self.name == "leonardo"):
                 self.wayposeNavigation(PATH_WAYPOSES[(self.location, "kitchen2")])
-        else:
-            raw_input("Hit enter to go to the kitchen...")
+        #else:
+        #    raw_input("Hit enter to go to the kitchen...")
         self.location = "kitchen"
         
         if (ignore_drinks):

@@ -23,7 +23,7 @@ class WaiterTimings(Waiter):
     possible_actions = {"kitchen" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_AFTER_PR2"], "room1" : ["GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room2" : ["GO_TO_ROOM1", "GO_TO_ROOM3", "GO_TO_KITCHEN"], "room3" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_KITCHEN"], "after_pr2" : ["GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3"]}
     timings_ports = {"donatello" : 12352, "leonardo" : 12353}
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
         Waiter.__init__(self, name, start_location, start_drinks_ordered, start_action, debug, default_velocity, default_angular_velocity)
         
         self.timings_server = SimpleServer(port = self.timings_ports[name], threading = False)

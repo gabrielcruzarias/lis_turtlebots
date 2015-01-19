@@ -11,10 +11,10 @@ import time
 class MultiNavigator(Navigator):
     request_ports = {"donatello" : 12348, "leonardo" : 12349}
     response_ports = {"donatello" : 12350, "leonardo" : 12351}
-    waypoints_host = "10.68.0.165" #"localhost" #"10.68.0.171"
+    waypoints_host = "localhost" #"10.68.0.165" #"localhost" #"10.68.0.171"
     DISTANCE_TOLERANCE = 0.55 # When the robot is within this distance of a waypoint, we publish a new goal (to make the path smoother)
     
-    def __init__(self, name, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
         Navigator.__init__(self, debug, default_velocity, default_angular_velocity)
         self.name = name
         self.position = Point(0, 0)
@@ -36,12 +36,12 @@ class MultiNavigator(Navigator):
     def wayposeNavigation(self, wayposes):
         for (point, orientation) in wayposes:
             self.reserveWaypoint(point)
-            self.goToPose(point, orientation)
-            #if ((point, orientation) != wayposes[-1]):
-            #    self.publishGoal(point, orientation)
-            #    self.waitUntilCloseToGoal(point)
-            #else:
-            #    self.goToPose(point, orientation)
+            #self.goToPose(point, orientation)
+            if ((point, orientation) != wayposes[-1]):
+                self.publishGoal(point, orientation)
+                self.waitUntilCloseToGoal(point)
+            else:
+                self.goToPose(point, orientation)
             #raw_input("Go to " + str(point) + "...")
             self.releaseWaypoint(self.last_reserved_location)
             self.last_reserved_location = point
@@ -57,7 +57,7 @@ class MultiNavigator(Navigator):
         #print "Waypoint server received reservation request"
         # The waypoints_server is only going to send an accept response. If the waypoint requested is already reserved, the server will wait until it's released to send a response.
         self.waypoint_response.get_message()
-        print "Granted waypoint " + str(point) + + ", waited for " + str(time.time() - t)
+        print "Granted waypoint " + str(point) + ", waited for " + str(time.time() - t)
         
     # Send message to the waypoints server to release previous waypoint. Called after the next waypoint is reached.
     def releaseWaypoint(self, point):

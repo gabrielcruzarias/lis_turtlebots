@@ -4,9 +4,11 @@
 import numpy as np  
 
 class AGENTS:
+    num = 2
     DONATELLO, LEONARDO = range(2)
 
 class ACTIONS:
+    num = 5
     ROOM_1, ROOM_2, ROOM_3, KITCHEN, GET_DRINK = range(5)
 
 class ObservationType:
@@ -21,13 +23,15 @@ class LOC(ObservationType):
 
 class ORDERS(ObservationType):
     num = 2
+    NO_ORDERS, ORDERS = range(2)
 
 class HOLD(ObservationType):
     num = 2
+    NOT_HOLDING, HOLDING = range(2)
 
 class PR2:
-    SOMEONE, INHAND, NOT_READY = range(3)
-    num = 3
+    SOMEONE, INHAND, NOT_READY, NO_OBS = range(4)
+    num = 4
 
 class Observations:
     def __init__(self):

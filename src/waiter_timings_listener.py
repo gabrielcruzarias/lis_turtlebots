@@ -25,7 +25,7 @@ class TimingsListener(object):
     timings_hosts = {"donatello" : "10.68.0.171", "leonardo" : "10.68.0.175"}
     
     def __init__(self):
-        self.debug = False
+        self.debug = True
     
         self.listener = {}
         
