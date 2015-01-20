@@ -54,6 +54,7 @@ class Navigator(TurtlebotWithAR):
 
     def cancelGoal(self):
         self.going_to_goal = False
+        
     # Wait until the goal is reached
     def waitToReachGoal(self):
         while (self.going_to_goal):

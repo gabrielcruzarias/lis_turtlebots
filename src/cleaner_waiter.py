@@ -104,7 +104,7 @@ class Waiter(MultiNavigator):
     def goToRoom1(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room1...")
-        if (not self.debug):
+        if (True or not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
@@ -127,7 +127,7 @@ class Waiter(MultiNavigator):
     def goToRoom2(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room2...")
-        if (not self.debug):
+        if (True or not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
@@ -151,7 +151,7 @@ class Waiter(MultiNavigator):
     def goToRoom3(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room3...")
-        if (not self.debug):
+        if (True or not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
@@ -173,7 +173,7 @@ class Waiter(MultiNavigator):
     
     def goToKitchen(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
-        if (not self.debug):
+        if (True or not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "room2" or self.location == "room3"):
