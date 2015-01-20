@@ -20,12 +20,12 @@ from BeerBotDomain import *
 
 class Waiter(MultiNavigator):
     waiter_ports = {"donatello" : 12346, "leonardo" : 12347}
-    DRINKS_ORDERS_LIMIT = {"room1" : 2, "room2" : 2, "room3" : 2}
+    DRINKS_ORDERS_LIMIT = {"room1" : float("inf"), "room2" : float("inf"), "room3" : float("inf")}
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
     LOCATION_MAPPING = {"room1" : LOC.R1, "room2" : LOC.R2, "room3" : LOC.R3, "kitchen" : LOC.KITCHEN, "after_pr2" : LOC.KITCHEN}
     PR2_MSG_MAPPING = {"not_serving" : PR2.NOT_READY, "drink_in_hand" : PR2.INHAND, "serving_turtlebot" : PR2.SOMEONE, "no_obs" : PR2.NO_OBS}
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
@@ -49,25 +49,45 @@ class Waiter(MultiNavigator):
         #    self.goToPose(KITCHEN2[0], KITCHEN2[1])
 
         #self.eventLoop()
+        self.need_to_deliver = 0
 
     def eventLoop(self):
         rospy.loginfo("starting event loop! current action = " + self.action)
         while True:
             if (self.action == "GO_TO_ROOM1"):
                 self.goToRoom1()
-                self.action = "GO_TO_KITCHEN"
+                if (self.need_to_deliver > 0):
+                    self.action = "GO_TO_KITCHEN"
+                else:
+                    self.action = "GO_TO_ROOM3"
                 #self.transitionToNextState(obs) # GO_TO_KITCHEN, GO_TO_ROOM
             elif (self.action == "GO_TO_ROOM2"):
                 self.goToRoom2()
-                self.action = "GO_TO_KITCHEN"
+                if (self.need_to_deliver):
+                    self.action = "GO_TO_KITCHEN"
+                else:
+                    self.action = "GO_TO_ROOM1"
                 #self.transitionToNextState(obs) # GO_TO_KITCHEN, GO_TO_ROOM
             elif (self.action == "GO_TO_ROOM3"):
                 self.goToRoom3()
-                self.action = "GO_TO_KITCHEN"
+                if (self.need_to_deliver):
+                    self.action = "GO_TO_KITCHEN"
+                else:
+                    self.action = "GO_TO_ROOM2"
                 #self.transitionToNextState(obs) # GO_TO_KITCHEN, GO_TO_ROOM
             elif (self.action == "GO_TO_KITCHEN"):
-                self.goToKitchen()
-                self.action = "GET_DRINK"
+                obs = self.goToKitchen()
+                if (obs[3] == self.PR2_MSG_MAPPING["not_serving"] or obs[3] == self.PR2_MSG_MAPPING["drink_in_hand"]):
+                    self.action = "GET_DRINK"
+                else:
+                    if (len(self.drinks_ordered["room1"]) == 0):
+                        self.action = "GO_TO_ROOM1"
+                    elif (len(self.drinks_ordered["room2"]) == 0):
+                        self.action = "GO_TO_ROOM2"
+                    elif (len(self.drinks_ordered["room3"]) == 0):
+                        self.action = "GO_TO_ROOM3"
+                    else:
+                        self.action = "GO_TO_ROOM1"
                 #self.transitionToNextState(obs) # WAIT_IN_KITCHEN, GO_TO_ROOM
             elif (self.action == "WAIT_IN_KITCHEN"):
                 obs = self.waitInKitchen()
@@ -83,7 +103,14 @@ class Waiter(MultiNavigator):
             elif (self.action == "GET_DRINK"):
                 self.getDrink()
                 #self.action = "GO_TO_ROOM1"
-                self.action = "GO_TO_KITCHEN"
+                if (len(self.drinks_ordered["room1"]) > 0):
+                    self.action = "GO_TO_ROOM1"
+                elif (len(self.drinks_ordered["room2"]) > 0):
+                    self.action = "GO_TO_ROOM2"
+                elif (len(self.drinks_ordered["room3"]) > 0):
+                    self.action = "GO_TO_ROOM3"
+                else:
+                    self.action = "GO_TO_ROOM1"
                 #self.transitionToNextState(obs) # GO_TO_ROOM
                 #self.approach()
                 #self.send_msg_to_pr2("turtle in place position")
@@ -285,6 +312,8 @@ class Waiter(MultiNavigator):
             elif (self.drinks_on_turtlebot > self.drinks_ordered[self.location][0][0]):
                 self.drinks_on_turtlebot -= self.drinks_ordered[self.location][0][0]
                 self.drinks_ordered[self.location].pop(0)
+                
+            self.need_to_deliver -= drinks_to_deliver
             # Receive message saying that the drinks have been picked up by the people
             #drinks_delivered = 1
             #room_number = int(self.location[-1]) # self.location = "roomX" -> X = int(self.location[-1])
@@ -294,7 +323,7 @@ class Waiter(MultiNavigator):
         # Receive message saying how many drinks were ordered
         while (True):
             try:
-                ordered_drinks = int(raw_input("How many drinks do you want? "))
+                ordered_drinks = int(int(raw_input("How many drinks do you want? ")) > 0)
                 break
             except:
                 pass
@@ -302,6 +331,7 @@ class Waiter(MultiNavigator):
         drinks_to_add = min(self.DRINKS_ORDERS_LIMIT[self.location] - open_drinks, ordered_drinks)
         if (drinks_to_add > 0):
             self.drinks_ordered[self.location].append([drinks_to_add, time.time()])
+            self.need_to_deliver += drinks_to_add
         return ordered_drinks
         #room_number = int(self.location[-1]) # self.location = "roomX" -> X = int(self.location[-1])
         #self.drinks_ordered[room_number] += 1

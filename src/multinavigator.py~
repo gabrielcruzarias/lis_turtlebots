@@ -11,7 +11,7 @@ import time
 class MultiNavigator(Navigator):
     request_ports = {"donatello" : 12348, "leonardo" : 12349}
     response_ports = {"donatello" : 12350, "leonardo" : 12351}
-    waypoints_host = "10.68.0.171" #"10.68.0.165" #"localhost" #"10.68.0.171"
+    waypoints_host = "10.68.0.165" #"10.68.0.165" #"localhost" #"10.68.0.171"
     DISTANCE_TOLERANCE = 0.55 # When the robot is within this distance of a waypoint, we publish a new goal (to make the path smoother)
     
     def __init__(self, name, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):

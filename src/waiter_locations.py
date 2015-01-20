@@ -27,8 +27,8 @@ ROOM1_ENTRANCE_KITCHEN = (Point(-1, -0.1), Orientation(1, 0), False)
 ROOM1_ENTRANCE_OTHER_ROOMS = (Point(-1.74, 0.3), Orientation(-0.707, 0.707), False)
 ROOM1_PRE_EXIT = (Point(-4.37, -0.44), Orientation(0, 1), False)
 ROOM1_EXIT_KITCHEN = (Point(-1, -0.1), Orientation(0, 1), False)
-ROOM1_EXIT_ROOMS = (Point(-1, -0.1), Orientation(0.707, 0.707), False)
-ROOM1_HALLWAY = (Point(-1, -0.1), Orientation(0.707, 0.707), True)
+ROOM1_EXIT_ROOMS = (Point(-1, -0.1), Orientation(0.707, 0.707), True)
+#ROOM1_HALLWAY = (Point(-1, -0.1), Orientation(0.707, 0.707), True)
 #ROOM1_SPECIAL = (Point(-2.26, 1.50), Orientation(-0.68, 0.73))
 ROOM1_ROOM2 = (Point(-1.4, 1.07), Orientation(0.707, 0.707), True)
 
@@ -66,8 +66,8 @@ PATH_WAYPOSES[("room3", "room3")] = []
 
 PATH_WAYPOSES[("kitchen", "after_pr2")] = [PR2, AFTER_PR2]
 PATH_WAYPOSES[("kitchen", "room1")] = [ROOM1_ENTRANCE_KITCHEN, ROOM1]
-PATH_WAYPOSES[("kitchen", "room2")] = [ROOM1_HALLWAY, ROOM1_ROOM2, ROOM2_ENTRANCE_KITCHEN, ROOM2]
-PATH_WAYPOSES[("kitchen", "room3")] = [ROOM1_HALLWAY, ROOM1_ROOM2, ROOM2_HALLWAY, ROOM2_ROOM3, ROOM3_ENTRANCE, ROOM3]
+PATH_WAYPOSES[("kitchen", "room2")] = [ROOM1_EXIT_ROOMS, ROOM1_ROOM2, ROOM2_ENTRANCE_KITCHEN, ROOM2]
+PATH_WAYPOSES[("kitchen", "room3")] = [ROOM1_EXIT_ROOMS, ROOM1_ROOM2, ROOM2_HALLWAY, ROOM2_ROOM3, ROOM3_ENTRANCE, ROOM3]
 PATH_WAYPOSES[("kitchen", "kitchen1")] = []
 PATH_WAYPOSES[("kitchen", "kitchen2")] = []
 
