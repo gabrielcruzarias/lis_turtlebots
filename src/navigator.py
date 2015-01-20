@@ -52,6 +52,8 @@ class Navigator(TurtlebotWithAR):
         self.nav.send_goal(self.goal)
         self.nav.wait_for_result(rospy.Duration.from_sec(5.0)) # Does this line do anything?
 
+    def cancelGoal(self):
+        self.going_to_goal = False
     # Wait until the goal is reached
     def waitToReachGoal(self):
         while (self.going_to_goal):
@@ -60,9 +62,9 @@ class Navigator(TurtlebotWithAR):
 
     # Listens to the "/move_base/result" topic to determine when the goal is reached
     def goalResult(self, MoveBaseActionResult):
-        self.going_to_goal = False
-        #if (MoveBaseActionResult.status.status == 3):
-        #    self.going_to_goal = False
+        #self.going_to_goal = False
+        if (MoveBaseActionResult.status.status == 3):
+            self.going_to_goal = False
 
 
 if __name__=="__main__":

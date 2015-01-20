@@ -34,14 +34,14 @@ class MultiNavigator(Navigator):
         
     # Navigate to a goal location passing through a list of waypoints, always waiting until the next waypoint to be free
     def wayposeNavigation(self, wayposes):
-        for (point, orientation) in wayposes:
+        for (point, orientation, goal_point) in wayposes:
             self.reserveWaypoint(point)
             #self.goToPose(point, orientation)
-            if ((point, orientation) != wayposes[-1]):
+            if (goal_point): # If we want the turtlebot to finish going to the goal
+                self.goToPose(point, orientation)
+            else:
                 self.publishGoal(point, orientation)
                 self.waitUntilCloseToGoal(point)
-            else:
-                self.goToPose(point, orientation)
             #raw_input("Go to " + str(point) + "...")
             self.releaseWaypoint(self.last_reserved_location)
             self.last_reserved_location = point
@@ -79,7 +79,8 @@ class MultiNavigator(Navigator):
             
         while (self.position.distance(point) > self.DISTANCE_TOLERANCE):
             time.sleep(0.3) #sleep for a little
-    
+        self.cancelGoal()
+        
     # Listen to the robot's pose in the "map" frame
     def robotPose(self, PoseWithCovarianceStamped):
         position = PoseWithCovarianceStamped.pose.pose.position
