@@ -56,24 +56,24 @@ class Waiter(MultiNavigator):
         while True:
             if (self.action == "GO_TO_ROOM1"):
                 self.goToRoom1()
-                if (self.need_to_deliver):
-                    self.action = "GO_TO_ROOM3"
-                else:
+                if (self.need_to_deliver > 0):
                     self.action = "GO_TO_KITCHEN"
+                else:
+                    self.action = "GO_TO_ROOM3"
                 #self.transitionToNextState(obs) # GO_TO_KITCHEN, GO_TO_ROOM
             elif (self.action == "GO_TO_ROOM2"):
                 self.goToRoom2()
                 if (self.need_to_deliver):
-                    self.action = "GO_TO_ROOM1"
-                else:
                     self.action = "GO_TO_KITCHEN"
+                else:
+                    self.action = "GO_TO_ROOM1"
                 #self.transitionToNextState(obs) # GO_TO_KITCHEN, GO_TO_ROOM
             elif (self.action == "GO_TO_ROOM3"):
                 self.goToRoom3()
                 if (self.need_to_deliver):
-                    self.action = "GO_TO_ROOM2"
-                else:
                     self.action = "GO_TO_KITCHEN"
+                else:
+                    self.action = "GO_TO_ROOM2"
                 #self.transitionToNextState(obs) # GO_TO_KITCHEN, GO_TO_ROOM
             elif (self.action == "GO_TO_KITCHEN"):
                 obs = self.goToKitchen()
@@ -131,7 +131,7 @@ class Waiter(MultiNavigator):
     def goToRoom1(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room1...")
-        if (True or not self.debug):
+        if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
@@ -154,7 +154,7 @@ class Waiter(MultiNavigator):
     def goToRoom2(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room2...")
-        if (True or not self.debug):
+        if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
@@ -178,7 +178,7 @@ class Waiter(MultiNavigator):
     def goToRoom3(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
         rospy.loginfo("Going to room3...")
-        if (True or not self.debug):
+        if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "kitchen" or self.location == "room2" or self.location == "room3"):
@@ -200,7 +200,7 @@ class Waiter(MultiNavigator):
     
     def goToKitchen(self, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
-        if (True or not self.debug):
+        if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
             elif (self.location == "room2" or self.location == "room3"):
@@ -297,6 +297,38 @@ class Waiter(MultiNavigator):
     #
     #------------------------------------------------------
     def deliverDrinks(self):
+        #if (len(self.drinks_ordered[self.location]) > 0 and self.drinks_on_turtlebot > 0):
+        if (self.drinks_on_turtlebot > 0):
+            while (True):
+                try:
+                    grabbed = int(raw_input("Enter '1' if you grabbed the drink and '0' otherwise: "))
+                    break
+                except:
+                    pass
+            
+            if (grabbed):
+                self.drinks_on_turtlebot -= 1
+        
+            # reward
+        
+            if (self.drinks_on_turtlebot < self.drinks_ordered[self.location][0][0]):
+                self.drinks_ordered[self.location][0][0] -= self.drinks_on_turtlebot
+                self.drinks_on_turtlebot = 0
+            elif (self.drinks_on_turtlebot == self.drinks_ordered[self.location][0][0]):
+                self.drinks_ordered[self.location].pop(0)
+                self.drinks_on_turtlebot = 0
+            elif (self.drinks_on_turtlebot > self.drinks_ordered[self.location][0][0]):
+                self.drinks_on_turtlebot -= self.drinks_ordered[self.location][0][0]
+                self.drinks_ordered[self.location].pop(0)
+                
+            self.need_to_deliver -= drinks_to_deliver
+            # Receive message saying that the drinks have been picked up by the people
+            #drinks_delivered = 1
+            #room_number = int(self.location[-1]) # self.location = "roomX" -> X = int(self.location[-1])
+            #self.drinks_ordered[room_number] = max(0, self.drinks_ordered[room_number] - drinks_delivered)
+        
+    def deliverDrinksOld(self):
+        #if (len(self.drinks_ordered[self.location]) > 0 and self.drinks_on_turtlebot > 0):
         if (len(self.drinks_ordered[self.location]) > 0 and self.drinks_on_turtlebot > 0):
             drinks_to_deliver = min(self.drinks_ordered[self.location][0][0], self.drinks_on_turtlebot)
             raw_input("Grab " + str(drinks_to_deliver) + " drinks.")
