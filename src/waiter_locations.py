@@ -28,7 +28,7 @@ ROOM1_ENTRANCE_OTHER_ROOMS = (Point(-1.74, 0.3), Orientation(-0.707, 0.707), Fal
 ROOM1_PRE_EXIT = (Point(-4.37, -0.44), Orientation(0, 1), False)
 ROOM1_EXIT_KITCHEN = (Point(-1, -0.1), Orientation(0, 1), False)
 ROOM1_EXIT_ROOMS = (Point(-1, -0.1), Orientation(0.707, 0.707), False)
-ROOM1_HALLWAY = (Point(-1, -0.1), Orientation(0.707, 0.707))
+ROOM1_HALLWAY = (Point(-1, -0.1), Orientation(0.707, 0.707), True)
 #ROOM1_SPECIAL = (Point(-2.26, 1.50), Orientation(-0.68, 0.73))
 ROOM1_ROOM2 = (Point(-1.4, 1.07), Orientation(0.707, 0.707), True)
 
