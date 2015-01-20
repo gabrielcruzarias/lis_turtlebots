@@ -66,6 +66,9 @@ class Navigator(TurtlebotWithAR):
         #self.going_to_goal = False
         if (MoveBaseActionResult.status.status == 3):
             self.going_to_goal = False
+        elif (MoveBaseActionResult.status.status == 4):
+            self.going_to_goal = False
+            print "COULDN'T FIND A PATH TO THE GOAL, HOPEFULLY I GOT CLOSE ENOUGH"
 
 
 if __name__=="__main__":
