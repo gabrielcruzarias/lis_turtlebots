@@ -308,25 +308,7 @@ class Waiter(MultiNavigator):
             
             if (grabbed):
                 self.drinks_on_turtlebot -= 1
-        
-            # reward
-        
-            if (self.drinks_on_turtlebot < self.drinks_ordered[self.location][0][0]):
-                self.drinks_ordered[self.location][0][0] -= self.drinks_on_turtlebot
-                self.drinks_on_turtlebot = 0
-            elif (self.drinks_on_turtlebot == self.drinks_ordered[self.location][0][0]):
-                self.drinks_ordered[self.location].pop(0)
-                self.drinks_on_turtlebot = 0
-            elif (self.drinks_on_turtlebot > self.drinks_ordered[self.location][0][0]):
-                self.drinks_on_turtlebot -= self.drinks_ordered[self.location][0][0]
-                self.drinks_ordered[self.location].pop(0)
-                
-            self.need_to_deliver -= drinks_to_deliver
-            # Receive message saying that the drinks have been picked up by the people
-            #drinks_delivered = 1
-            #room_number = int(self.location[-1]) # self.location = "roomX" -> X = int(self.location[-1])
-            #self.drinks_ordered[room_number] = max(0, self.drinks_ordered[room_number] - drinks_delivered)
-        
+    
     def deliverDrinksOld(self):
         #if (len(self.drinks_ordered[self.location]) > 0 and self.drinks_on_turtlebot > 0):
         if (len(self.drinks_ordered[self.location]) > 0 and self.drinks_on_turtlebot > 0):

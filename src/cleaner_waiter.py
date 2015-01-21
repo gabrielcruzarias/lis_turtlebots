@@ -250,7 +250,8 @@ class Waiter(MultiNavigator):
             
         self.send_msg_to_pr2("turtle left pr2")
         
-        self.wayposeNavigation(PATH_WAYPOSES[(self.location, "after_pr2")])
+        if (not self.debug):
+            self.wayposeNavigation(PATH_WAYPOSES[(self.location, "after_pr2")])
         self.location = "after_pr2"
         
         (pr2_msg, pr2_msg_extra) = self.listenToPR2().split(":")
