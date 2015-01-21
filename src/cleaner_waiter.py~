@@ -24,8 +24,10 @@ class Waiter(MultiNavigator):
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
     LOCATION_MAPPING = {"room1" : LOC.R1, "room2" : LOC.R2, "room3" : LOC.R3, "kitchen" : LOC.KITCHEN, "after_pr2" : LOC.KITCHEN}
     PR2_MSG_MAPPING = {"not_serving" : PR2.NOT_READY, "drink_in_hand" : PR2.INHAND, "serving_turtlebot" : PR2.SOMEONE, "no_obs" : PR2.NO_OBS}
+    drink_orders_ports = {"donatello" : 12354, "leonardo" : 12355}
+    MACROACTION_COMPLETED_MSG = "completed action"
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
@@ -50,6 +52,11 @@ class Waiter(MultiNavigator):
 
         #self.eventLoop()
         self.need_to_deliver = 0
+        
+        drink_orders_turtle = SimpleServer(port = self.drink_orders_ports[name], threading = False)
+        drink_orders_listener = SimpleClient(host = "10.68.0.165", port = 12356)
+        
+        self.node = Node(int(name == "leonardo"))
 
     def eventLoop(self):
         rospy.loginfo("starting event loop! current action = " + self.action)
@@ -143,11 +150,17 @@ class Waiter(MultiNavigator):
         
         if (ignore_drinks):
             return
+            
+        self.drink_orders_turtle.broadcast("at room,0," + str(self.drinks_on_turtlebot))
+        (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
         
-        self.deliverDrinks()
+        #self.deliverDrinks()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #num_drinks = self.getOrders()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        num_drinks = self.getOrders()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        
+        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
+        
         return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
         
         
@@ -167,10 +180,16 @@ class Waiter(MultiNavigator):
         if (ignore_drinks):
             return
         
-        self.deliverDrinks()
+        self.drink_orders_turtle.broadcast("at room,1," + str(self.drinks_on_turtlebot))
+        (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
+        
+        #self.deliverDrinks()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #num_drinks = self.getOrders()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        num_drinks = self.getOrders()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        
+        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
+        
         return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
         
     
@@ -191,10 +210,16 @@ class Waiter(MultiNavigator):
         if (ignore_drinks):
             return
         
-        self.deliverDrinks()
+        self.drink_orders_turtle.broadcast("at room,2," + str(self.drinks_on_turtlebot))
+        (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
+        
+        #self.deliverDrinks()
+        #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        #num_drinks = self.getOrders()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
-        num_drinks = self.getOrders()
-        rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
+        
+        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
+        
         return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
         
     
@@ -221,6 +246,9 @@ class Waiter(MultiNavigator):
         print (pr2_msg, pr2_msg_extra)
         if (pr2_msg_extra == " waiting_for_turtlebot"):
             pr2_msg = "drink_in_hand"
+                
+        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
+        
         return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
     
     def waitInKitchen(self):
@@ -258,6 +286,8 @@ class Waiter(MultiNavigator):
         print (pr2_msg, pr2_msg_extra)
         if (pr2_msg_extra == " waiting_for_turtlebot"):
             pr2_msg = "drink_in_hand"
+        
+        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
         
         return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
         
