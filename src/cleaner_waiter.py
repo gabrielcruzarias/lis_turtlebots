@@ -150,7 +150,9 @@ class Waiter(MultiNavigator):
         if (ignore_drinks):
             return
             
+        holding = self.drinks_on_turtlebot
         self.drink_orders_turtle.broadcast("at room,0," + str(self.drinks_on_turtlebot))
+        num_drinks = 0
         while (True):
             try:
                 msg = self.drink_orders_listener.get_message()
@@ -159,6 +161,8 @@ class Waiter(MultiNavigator):
                 break
             except:
                 pass
+        
+        print "Drinks ordered = " + str(num_drinks) + ", delivered " + str(holding - self.drinks_on_turtlebot) + " drinks"
                 
         #self.deliverDrinks()
         #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
@@ -186,7 +190,9 @@ class Waiter(MultiNavigator):
         if (ignore_drinks):
             return
         
+        holding = self.drinks_on_turtlebot
         self.drink_orders_turtle.broadcast("at room,1," + str(self.drinks_on_turtlebot))
+        num_drinks = 0
         while (True):
             try:
                 msg = self.drink_orders_listener.get_message()
@@ -195,6 +201,8 @@ class Waiter(MultiNavigator):
                 break
             except:
                 pass
+        
+        print "Drinks ordered = " + str(num_drinks) + ", delivered " + str(holding - self.drinks_on_turtlebot) + " drinks"
                 
         #self.deliverDrinks()
         #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
@@ -223,7 +231,9 @@ class Waiter(MultiNavigator):
         if (ignore_drinks):
             return
         
+        holding = self.drinks_on_turtlebot
         self.drink_orders_turtle.broadcast("at room,2," + str(self.drinks_on_turtlebot))
+        num_drinks = 0
         while (True):
             try:
                 msg = self.drink_orders_listener.get_message()
@@ -232,6 +242,8 @@ class Waiter(MultiNavigator):
                 break
             except:
                 pass
+        
+        print "Drinks ordered = " + str(num_drinks) + ", delivered " + str(holding - self.drinks_on_turtlebot) + " drinks"
                 
         #self.deliverDrinks()
         #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
