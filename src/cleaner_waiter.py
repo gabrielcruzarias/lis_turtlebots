@@ -25,7 +25,7 @@ class Waiter(MultiNavigator):
     LOCATION_MAPPING = {"room1" : LOC.R1, "room2" : LOC.R2, "room3" : LOC.R3, "kitchen" : LOC.KITCHEN, "after_pr2" : LOC.KITCHEN}
     PR2_MSG_MAPPING = {"not_serving" : PR2.NOT_READY, "drink_in_hand" : PR2.INHAND, "serving_turtlebot" : PR2.SOMEONE, "no_obs" : PR2.NO_OBS}
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
