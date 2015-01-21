@@ -153,7 +153,9 @@ class Waiter(MultiNavigator):
         self.drink_orders_turtle.broadcast("at room,0," + str(self.drinks_on_turtlebot))
         while (True):
             try:
-                (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
+                msg = self.drink_orders_listener.get_message()
+                print msg
+                (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in msg.split(",")]
                 break
             except:
                 pass
@@ -187,7 +189,9 @@ class Waiter(MultiNavigator):
         self.drink_orders_turtle.broadcast("at room,1," + str(self.drinks_on_turtlebot))
         while (True):
             try:
-                (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
+                msg = self.drink_orders_listener.get_message()
+                print msg
+                (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in msg.split(",")]
                 break
             except:
                 pass
@@ -222,7 +226,9 @@ class Waiter(MultiNavigator):
         self.drink_orders_turtle.broadcast("at room,2," + str(self.drinks_on_turtlebot))
         while (True):
             try:
-                (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
+                msg = self.drink_orders_listener.get_message()
+                print msg
+                (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in msg.split(",")]
                 break
             except:
                 pass
