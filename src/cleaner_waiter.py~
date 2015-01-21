@@ -24,7 +24,7 @@ class Waiter(MultiNavigator):
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
     LOCATION_MAPPING = {"room1" : LOC.R1, "room2" : LOC.R2, "room3" : LOC.R3, "kitchen" : LOC.KITCHEN, "after_pr2" : LOC.KITCHEN}
     PR2_MSG_MAPPING = {"not_serving" : PR2.NOT_READY, "drink_in_hand" : PR2.INHAND, "serving_turtlebot" : PR2.SOMEONE, "no_obs" : PR2.NO_OBS}
-    drink_orders_ports = {"donatello" : 12354, "leonardo" : 12355}
+    drink_orders_ports = {"donatello" : 12380, "leonardo" : 12381}
     MACROACTION_COMPLETED_MSG = "completed action"
     
     def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
@@ -54,7 +54,7 @@ class Waiter(MultiNavigator):
         self.need_to_deliver = 0
         
         drink_orders_turtle = SimpleServer(port = self.drink_orders_ports[name], threading = False)
-        drink_orders_listener = SimpleClient(host = "10.68.0.165", port = 12356)
+        drink_orders_listener = SimpleClient(host = pr2_host, port = 12356)
         
         self.node = Node(int(name == "leonardo"))
 
