@@ -151,8 +151,13 @@ class Waiter(MultiNavigator):
             return
             
         self.drink_orders_turtle.broadcast("at room,0," + str(self.drinks_on_turtlebot))
-        (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
-        
+        while (True):
+            try:
+                (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
+                break
+            except:
+                pass
+                
         #self.deliverDrinks()
         #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         #num_drinks = self.getOrders()
@@ -180,8 +185,13 @@ class Waiter(MultiNavigator):
             return
         
         self.drink_orders_turtle.broadcast("at room,1," + str(self.drinks_on_turtlebot))
-        (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
-        
+        while (True):
+            try:
+                (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
+                break
+            except:
+                pass
+                
         #self.deliverDrinks()
         #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         #num_drinks = self.getOrders()
@@ -210,8 +220,13 @@ class Waiter(MultiNavigator):
             return
         
         self.drink_orders_turtle.broadcast("at room,2," + str(self.drinks_on_turtlebot))
-        (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
-        
+        while (True):
+            try:
+                (num_drinks, self.drinks_on_turtlebot) = [int(x) for x in self.drink_orders_listener.get_message().split(",")]
+                break
+            except:
+                pass
+                
         #self.deliverDrinks()
         #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         #num_drinks = self.getOrders()
