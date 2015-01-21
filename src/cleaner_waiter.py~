@@ -56,7 +56,6 @@ class Waiter(MultiNavigator):
         drink_orders_turtle = SimpleServer(port = self.drink_orders_ports[name], threading = False)
         drink_orders_listener = SimpleClient(host = pr2_host, port = 12356)
         
-        self.node = Node(int(name == "leonardo"))
 
     def eventLoop(self):
         rospy.loginfo("starting event loop! current action = " + self.action)
