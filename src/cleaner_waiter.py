@@ -54,7 +54,7 @@ class Waiter(MultiNavigator):
         self.need_to_deliver = 0
         
         self.drink_orders_turtle = SimpleServer(port = self.drink_orders_ports[name], threading = False)
-        self.drink_orders_listener = SimpleClient(host = pr2_host, port = 12356)
+        self.drink_orders_listener = SimpleClient(host = pr2_host, port = 12370)
         
 
     def eventLoop(self):
