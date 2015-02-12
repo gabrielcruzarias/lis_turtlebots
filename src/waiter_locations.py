@@ -17,6 +17,7 @@ ROOM2 = (Point(-3.29, 3.87), Orientation(0.982, 0.189), False)
 ROOM3 = (Point(-3.59, 7.07), Orientation(0.954, 0.301), False)
 KITCHEN1 = (Point(0, -0.83), Orientation(-0.06, 0.998), True)
 KITCHEN2 = (Point(0.05, -0.12), Orientation(-0.239, 0.971), True)
+BEFORE_PR2 = (Point(0.76, -0.64), Orientation(0, 1), True)
 AFTER_PR2 = (Point(0.03, 0.57), Orientation(1, 0), False)
 
 # Waypoints

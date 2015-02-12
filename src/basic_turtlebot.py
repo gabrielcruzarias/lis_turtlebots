@@ -3,6 +3,7 @@
 #import roslib
 import rospy
 from geometry_msgs.msg import Twist
+from kobuki_msgs.msg import BumperEvent
 #import sys, select, termios, tty
 import time
 import math
@@ -19,6 +20,8 @@ class Turtlebot(object):
         if (not debug):
             self.pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist)
             self.twist = Twist()
+            rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, processSensing)
+            self.found_object = False
         
     # Moves the turtlebot "distance" meters at "velocity" m/s
     def move(self, distance, velocity = None):
@@ -57,6 +60,32 @@ class Turtlebot(object):
         self.twist.linear.x = linear; self.twist.linear.y = 0; self.twist.linear.z = 0
         self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = angular
         self.pub.publish(self.twist)
+        
+    # Approach the object. Ends when the bumper sensor is activated
+    # Assumes the robot is facing the object and within ~1.5 meters of it
+    def bumperApproach(self):
+        start_t = time.time()
+        TIME_TO_FAIL = 15 # This might not have to be this big
+        self.found_object = False
+        while (not self.found_object):
+            if (time.time() - start_t > TIME_TO_FAIL):
+                rospy.loginfo("ERROR: box_not_reached")
+                break
+            twist.linear.x = 0.1; twist.linear.y = 0; twist.linear.z = 0
+            twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0 # Look at the object's pose every time to adjust the angular velocity.
+            pub.publish(twist)
+        twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
+        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+        pub.publish(twist)
+        #time.sleep(2) # This is just to let me know that the robot is transitioning from approaching the object to pushing it.
+        print "Done approaching"
+        
+    # This tells us when the robot is in contact with the object
+    def processSensing(self, BumperEvent):
+        if (not self.found_object and BumperEvent.PRESSED == 1):
+            self.found_object = True
+        elif (self.found_object and BumperEvent.PRESSED == 0):
+            self.found_object = False
 
 
 if __name__=="__main__":

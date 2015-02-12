@@ -293,7 +293,9 @@ class Waiter(MultiNavigator):
         self.waitInKitchen()
         
         if (not self.debug):
-            self.approach()
+            self.goToPose(BEFORE_PR2[0], BEFORE_PR2[1])
+            self.bumperApproach()
+            self.move(-0.2, -0.15)
             self.turn()
         else:
             raw_input("Hit enter to approach PR2...")
