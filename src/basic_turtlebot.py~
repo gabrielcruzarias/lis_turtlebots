@@ -20,7 +20,7 @@ class Turtlebot(object):
         if (not debug):
             self.pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist)
             self.twist = Twist()
-            rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, processSensing)
+            rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, self.processSensing)
             self.found_object = False
         
     # Moves the turtlebot "distance" meters at "velocity" m/s
@@ -64,7 +64,7 @@ class Turtlebot(object):
     # Approach the object. Ends when the bumper sensor is activated
     # Assumes the robot is facing the object and within ~1.5 meters of it
     def bumperApproach(self):
-        global found_object
+        start_t = time.time()
         TIME_TO_FAIL = 15 # This might not have to be this big
         self.found_object = False
         while (not self.found_object):
@@ -77,9 +77,8 @@ class Turtlebot(object):
         twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
         twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
         pub.publish(twist)
-        #print "DONE WITH APPROACH" ###------------------------------------------------------------------------------------------###
-        time.sleep(2) # This is just to let me know that the robot is transitioning from approaching the object to pushing it.
-        return result
+        #time.sleep(2) # This is just to let me know that the robot is transitioning from approaching the object to pushing it.
+        print "Done approaching"
         
     # This tells us when the robot is in contact with the object
     def processSensing(self, BumperEvent):
@@ -119,6 +118,8 @@ if __name__=="__main__":
         elif (command == "show_variables"):
             print "Default velocity =", turtlebot.default_velocity
             print "Default angular velocity =", turtlebot.default_angular_velocity
+        elif (command == "bumper"):
+            turtlebot.bumperApproach()
         elif (command == "end"):
             break
 

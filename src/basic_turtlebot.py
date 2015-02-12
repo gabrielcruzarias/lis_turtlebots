@@ -20,7 +20,7 @@ class Turtlebot(object):
         if (not debug):
             self.pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist)
             self.twist = Twist()
-            rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, processSensing)
+            rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, self.processSensing)
             self.found_object = False
         
     # Moves the turtlebot "distance" meters at "velocity" m/s
@@ -71,12 +71,12 @@ class Turtlebot(object):
             if (time.time() - start_t > TIME_TO_FAIL):
                 rospy.loginfo("ERROR: box_not_reached")
                 break
-            twist.linear.x = 0.1; twist.linear.y = 0; twist.linear.z = 0
-            twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0 # Look at the object's pose every time to adjust the angular velocity.
-            pub.publish(twist)
-        twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
-        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
-        pub.publish(twist)
+            self.twist.linear.x = 0.1; self.twist.linear.y = 0; self.twist.linear.z = 0
+            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0 # Look at the object's pose every time to adjust the angular velocity.
+            self.pub.publish(self.twist)
+        self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
+        self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
+        self.pub.publish(self.twist)
         #time.sleep(2) # This is just to let me know that the robot is transitioning from approaching the object to pushing it.
         print "Done approaching"
         
@@ -118,6 +118,8 @@ if __name__=="__main__":
         elif (command == "show_variables"):
             print "Default velocity =", turtlebot.default_velocity
             print "Default angular velocity =", turtlebot.default_angular_velocity
+        elif (command == "bumper"):
+            turtlebot.bumperApproach()
         elif (command == "end"):
             break
 
