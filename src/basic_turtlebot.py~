@@ -71,12 +71,12 @@ class Turtlebot(object):
             if (time.time() - start_t > TIME_TO_FAIL):
                 rospy.loginfo("ERROR: box_not_reached")
                 break
-            twist.linear.x = 0.1; twist.linear.y = 0; twist.linear.z = 0
-            twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0 # Look at the object's pose every time to adjust the angular velocity.
-            pub.publish(twist)
-        twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
-        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
-        pub.publish(twist)
+            self.twist.linear.x = 0.1; self.twist.linear.y = 0; self.twist.linear.z = 0
+            self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0 # Look at the object's pose every time to adjust the angular velocity.
+            self.pub.publish(self.twist)
+        self.twist.linear.x = 0; self.twist.linear.y = 0; self.twist.linear.z = 0
+        self.twist.angular.x = 0; self.twist.angular.y = 0; self.twist.angular.z = 0
+        self.pub.publish(self.twist)
         #time.sleep(2) # This is just to let me know that the robot is transitioning from approaching the object to pushing it.
         print "Done approaching"
         
