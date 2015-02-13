@@ -1,6 +1,6 @@
 import rospy
 from SimpleServer import SimpleServer, SimpleClient
-from new_papm import pick_and_place
+#from new_papm import pick_and_place
 from argparse import ArgumentParser
 import time
 import random

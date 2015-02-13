@@ -77,8 +77,8 @@ PATH_WAYPOSES[("pr2", "after_pr2")] = [AFTER_PR2]
 PATH_WAYPOSES[("after_pr2", "room1")] = [ROOM1_ENTRANCE_KITCHEN, ROOM1]
 PATH_WAYPOSES[("after_pr2", "room2")] = [ROOM1_ROOM2, ROOM2_ENTRANCE_KITCHEN, ROOM2]
 PATH_WAYPOSES[("after_pr2", "room3")] = [ROOM1_ROOM2, ROOM2_HALLWAY, ROOM2_ROOM3, ROOM3_ENTRANCE, ROOM3]
-PATH_WAYPOSES[("after_pr2", "kitchen1")] = [KITCHEN1]
-PATH_WAYPOSES[("after_pr2", "kitchen2")] = [KITCHEN2]
+PATH_WAYPOSES[("after_pr2", "kitchen1")] = [ROOM1_EXIT_KITCHEN, KITCHEN1]
+PATH_WAYPOSES[("after_pr2", "kitchen2")] = [ROOM1_EXIT_KITCHEN, KITCHEN2]
 
 
 #ROOM1_POSITION = {"donatello" : Point(0, 0), "leonardo" : Point(0, 0)}

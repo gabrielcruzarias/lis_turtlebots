@@ -19,8 +19,8 @@ class interface:
           host_D="10.68.0.171"
           host_L="10.68.0.175"
       else:
-          host_D = "localhost"
-          host_L = "localhost"
+          host_D = "10.68.0.171"
+          host_L = "10.68.0.175"
       self.clientD = SimpleClient(host=host_D,port=12346) # D for Donatello
       self.clientL = SimpleClient(host=host_L,port=12347) # L for Leonardo
       self.turtle_being_attended = ""

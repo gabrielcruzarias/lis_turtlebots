@@ -17,6 +17,7 @@ ROOM2 = (Point(-3.29, 3.87), Orientation(0.982, 0.189), False)
 ROOM3 = (Point(-3.59, 7.07), Orientation(0.954, 0.301), False)
 KITCHEN1 = (Point(0, -0.83), Orientation(-0.06, 0.998), True)
 KITCHEN2 = (Point(0.05, -0.12), Orientation(-0.239, 0.971), True)
+BEFORE_PR2 = (Point(0.76, -0.64), Orientation(0, 1), True)
 AFTER_PR2 = (Point(0.03, 0.57), Orientation(1, 0), False)
 
 # Waypoints
@@ -76,8 +77,8 @@ PATH_WAYPOSES[("pr2", "after_pr2")] = [AFTER_PR2]
 PATH_WAYPOSES[("after_pr2", "room1")] = [ROOM1_ENTRANCE_KITCHEN, ROOM1]
 PATH_WAYPOSES[("after_pr2", "room2")] = [ROOM1_ROOM2, ROOM2_ENTRANCE_KITCHEN, ROOM2]
 PATH_WAYPOSES[("after_pr2", "room3")] = [ROOM1_ROOM2, ROOM2_HALLWAY, ROOM2_ROOM3, ROOM3_ENTRANCE, ROOM3]
-PATH_WAYPOSES[("after_pr2", "kitchen1")] = [KITCHEN1]
-PATH_WAYPOSES[("after_pr2", "kitchen2")] = [KITCHEN2]
+PATH_WAYPOSES[("after_pr2", "kitchen1")] = [ROOM1_EXIT_KITCHEN, KITCHEN1]
+PATH_WAYPOSES[("after_pr2", "kitchen2")] = [ROOM1_EXIT_KITCHEN, KITCHEN2]
 
 
 #ROOM1_POSITION = {"donatello" : Point(0, 0), "leonardo" : Point(0, 0)}
