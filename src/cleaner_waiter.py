@@ -19,6 +19,7 @@ from waiter_locations import *
 from BeerBotDomain import *
 
 class Waiter(MultiNavigator):
+    kitchen_only = True
     waiter_ports = {"donatello" : 12346, "leonardo" : 12347}
     DRINKS_ORDERS_LIMIT = {"room1" : float("inf"), "room2" : float("inf"), "room3" : float("inf")}
     # states = "GO_TO_ROOM1", "GO_TO_ROOM2", "GO_TO_ROOM3", "GO_TO_KITCHEN", "WAIT_IN_KITCHEN", "ASK_FOR_DRINK", "GET_DRINK"
@@ -27,7 +28,7 @@ class Waiter(MultiNavigator):
     drink_orders_ports = {"donatello" : 12380, "leonardo" : 12381}
     MACROACTION_COMPLETED_MSG = "completed action"
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GO_TO_ROOM1", "leonardo" : "GO_TO_ROOM2"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GET_DRINK", "leonardo" : "GET_DRINK"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
@@ -38,7 +39,7 @@ class Waiter(MultiNavigator):
         self.drinks_on_turtlebot = 0
         
         self.talk_to_pr2_server = SimpleServer(port = self.waiter_ports[name], threading = True)
-        pr2_host = "pr2mm1.csail.mit.edu"
+        pr2_host = "10.68.0.165" #"pr2mm1.csail.mit.edu"
         #if (self.debug):
         #    pr2_host = "localhost"
         self.listen_to_pr2_client = SimpleClient(host = pr2_host, port = 12345) # "pr2mm1.csail.mit.edu"
@@ -109,7 +110,9 @@ class Waiter(MultiNavigator):
             elif (self.action == "GET_DRINK"):
                 self.getDrink()
                 #self.action = "GO_TO_ROOM1"
-                if (len(self.drinks_ordered["room1"]) > 0):
+                if (self.kitchen_only):
+                    self.action = "GO_TO_KITCHEN"
+                elif (len(self.drinks_ordered["room1"]) > 0):
                     self.action = "GO_TO_ROOM1"
                 elif (len(self.drinks_ordered["room2"]) > 0):
                     self.action = "GO_TO_ROOM2"
