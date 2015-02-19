@@ -77,7 +77,7 @@ class MultiNavigator(Navigator):
             raw_input("Hit enter when the robot is close enough to " + str(point) + "...")
             return
             
-        while (self.position.distance(point) > self.DISTANCE_TOLERANCE):
+        while (self.going_to_goal and self.position.distance(point) > self.DISTANCE_TOLERANCE):
             time.sleep(0.3) #sleep for a little
         self.cancelGoal()
         
