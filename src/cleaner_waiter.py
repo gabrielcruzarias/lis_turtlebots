@@ -187,7 +187,7 @@ class Waiter(MultiNavigator):
     
     
     def goToRoom3(self, ignore_drinks = False):
-        return self.goToRoom("room3", ignore_drinks
+        return self.goToRoom("room3", ignore_drinks)
         
     
     def goToKitchen(self, ignore_drinks = False):
@@ -241,7 +241,7 @@ class Waiter(MultiNavigator):
         msg = self.wait_until_msg_is(["serving_turtlebot: pr2 placed object", "serving_turtlebot: move"])
         times_too_far_away = 0
         while (msg != "serving_turtlebot: pr2 placed object"):
-            times = int(msg.split(";")[1]
+            times = int(msg.split(";")[1])
             if (times == times_too_far_away):
                 distance = float(msg.split(";")[2]) + 0.1
                 self.move(-distance, -self.default_velocity)
@@ -250,6 +250,7 @@ class Waiter(MultiNavigator):
                 msg = self.wait_until_msg_is(["serving_turtlebot: pr2 placed object", "serving_turtlebot: move"])
             else:
                 time.sleep(0.3)
+                msg = self.wait_until_msg_is(["serving_turtlebot: pr2 placed object", "serving_turtlebot: move"])
         self.drinks_on_turtlebot += 1
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         if (not self.debug):
