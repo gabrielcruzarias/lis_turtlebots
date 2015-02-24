@@ -73,7 +73,7 @@ class interface:
               distance = self.distance_to_turtlebot()
               times_too_far_away = 0
               while (distance > 0):
-                    self.send_msg_to_turtle("serving_turtlebot: move;"\
+                    self.send_msg_to_turtle("serving_turtlebot: move;" + str(times_too_far_away) + ";"\
                         + str(distance))
                     self.wait_until_msg_is("done moving " + str(times_too_far_away), \
                         + self.turtle_being_attended)

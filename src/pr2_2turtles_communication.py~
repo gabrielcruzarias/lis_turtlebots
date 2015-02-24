@@ -1,5 +1,5 @@
 import rospy
-import roslib;
+import roslib; roslib.load_manifest("pr2_awesomeness")
 
 from SimpleServer import SimpleServer, SimpleClient
 from argparse import ArgumentParser
@@ -8,7 +8,7 @@ import random
 import os
 from threading import Thread
 
-ARIEL =  False
+ARIEL =  True
 if ARIEL:
   from pick_and_place import pick_and_place
 
@@ -16,7 +16,7 @@ class interface:
   START, PICKING, WAITING_TO_PLACE, PLACING= range(4)
   def __init__(self, init_state=None, debug=False):
       self.server  = SimpleServer(port=12345, threading=True)
-      if  ARIEL:
+      if  True or ARIEL:
           host_D="10.68.0.165"
           host_L="10.68.0.165"
           
@@ -70,6 +70,15 @@ class interface:
               rospy.loginfo("Waiting for " + self.turtle_being_attended)
               self.wait_until_msg_is("turtle in place position", \
                     self.turtle_being_attended)
+              distance = self.distance_to_turtlebot()
+              times_too_far_away = 0
+              while (distance > 0):
+                    self.send_msg_to_turtle("serving_turtlebot: move;"\
+                        + str(distance))
+                    self.wait_until_msg_is("done moving " + str(times_too_far_away), \
+                        + self.turtle_being_attended)
+                    times_too_far_away += 1
+                    distance = self.distance_to_turtlebot()
               self.state = self.PLACING
           
           if self.state == self.PLACING:
@@ -167,6 +176,9 @@ class interface:
 
       else:
           rospy.sleep(1) # dummy action
+          
+  def distance_to_turtlebot(self):
+      return 0
 
 def awesome_parse_arguments():
     parser = ArgumentParser("Select initial state")

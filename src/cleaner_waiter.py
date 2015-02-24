@@ -39,7 +39,7 @@ class Waiter(MultiNavigator):
         self.drinks_on_turtlebot = 0
         
         self.talk_to_pr2_server = SimpleServer(port = self.waiter_ports[name], threading = True)
-        pr2_host = "10.68.0.165" #"pr2mm1.csail.mit.edu"
+        pr2_host = "pr2mm1.csail.mit.edu"
         #if (self.debug):
         #    pr2_host = "localhost"
         self.listen_to_pr2_client = SimpleClient(host = pr2_host, port = 12345) # "pr2mm1.csail.mit.edu"
@@ -241,12 +241,15 @@ class Waiter(MultiNavigator):
         msg = self.wait_until_msg_is(["serving_turtlebot: pr2 placed object", "serving_turtlebot: move"])
         times_too_far_away = 0
         while (msg != "serving_turtlebot: pr2 placed object"):
-            distance = float(msg.split(";")[1]) + 0.1
-            self.move(-distance, -self.default_velocity)
-            self.send_msg_to_pr2("done moving " + str(times_too_far_away))
-            times_too_far_away += 1
-            msg = self.wait_until_msg_is(["serving_turtlebot: pr2 placed object", "serving_turtlebot: move"])
-            
+            times = int(msg.split(";")[1]
+            if (times == times_too_far_away):
+                distance = float(msg.split(";")[2]) + 0.1
+                self.move(-distance, -self.default_velocity)
+                self.send_msg_to_pr2("done moving " + str(times_too_far_away))
+                times_too_far_away += 1
+                msg = self.wait_until_msg_is(["serving_turtlebot: pr2 placed object", "serving_turtlebot: move"])
+            else:
+                time.sleep(0.3)
         self.drinks_on_turtlebot += 1
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         if (not self.debug):
@@ -346,8 +349,7 @@ class Waiter(MultiNavigator):
         # Receive message saying how many drinks were ordered
         while (True):
             try:
-                ordered_drinks = int(int(raw
-                _input("How many drinks do you want? ")) > 0)
+                ordered_drinks = int(int(raw_input("How many drinks do you want? ")) > 0)
                 break
             except:
                 pass
