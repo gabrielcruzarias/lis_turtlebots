@@ -20,7 +20,7 @@ class MultiNavigator(Navigator):
         self.position = Point(0, 0)
         self.angle = 0
         self.last_reserved_location = None
-        self.multiagent = False
+        self.multiagent = True
         
         if (self.multiagent):
             # Create request server and response clients to communicate with waypoints_server
