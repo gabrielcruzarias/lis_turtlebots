@@ -39,7 +39,7 @@ class Waiter(MultiNavigator):
         self.drinks_on_turtlebot = 0
         
         self.talk_to_pr2_server = SimpleServer(port = self.waiter_ports[name], threading = True)
-        pr2_host = "pr2mm1.csail.mit.edu"
+        pr2_host = "10.68.0.165" #"pr2mm1.csail.mit.edu"
         #if (self.debug):
         #    pr2_host = "localhost"
         self.listen_to_pr2_client = SimpleClient(host = pr2_host, port = 12345) # "pr2mm1.csail.mit.edu"
