@@ -259,16 +259,18 @@ class Waiter(MultiNavigator):
             raw_input("Hit enter to leave PR2...")
             
         self.send_msg_to_pr2("turtle left pr2")
-        
+ 
         if (not self.debug):
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "after_pr2")])
-        self.location = "after_pr2"
-        
+        self.location = "after_pr2" 
+        #XXX we don't need to listen since we know where the pr2 is and what's it's doing
+        pr2_msg = "not_serving"
+        """
         (pr2_msg, pr2_msg_extra) = self.listenToPR2().split(":")
         print (pr2_msg, pr2_msg_extra)
         if (pr2_msg_extra == " waiting_for_turtlebot"):
             pr2_msg = "drink_in_hand"
-        
+        """
         self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
         
         return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
