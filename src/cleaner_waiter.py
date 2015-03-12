@@ -139,7 +139,7 @@ class Waiter(MultiNavigator):
     
     def goToRoom(self, room, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
-        rospy.loginfo("Going to room1...")
+        rospy.loginfo("Going to " + room + "...")
         if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)

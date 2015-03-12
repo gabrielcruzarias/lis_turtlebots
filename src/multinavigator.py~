@@ -12,7 +12,7 @@ class MultiNavigator(Navigator):
     request_ports = {"donatello" : 12348, "leonardo" : 12349}
     response_ports = {"donatello" : 12350, "leonardo" : 12351}
     waypoints_host = "10.68.0.165" #"10.68.0.165" #"localhost" #"10.68.0.171"
-    DISTANCE_TOLERANCE = 0.65 # When the robot is within this distance of a waypoint, we publish a new goal (to make the path smoother)
+    DISTANCE_TOLERANCE = 1.00 # When the robot is within this distance of a waypoint, we publish a new goal (to make the path smoother)
     
     def __init__(self, name, debug = True, default_velocity = 0.3, default_angular_velocity = 0.75):
         Navigator.__init__(self, debug, default_velocity, default_angular_velocity)
@@ -21,6 +21,8 @@ class MultiNavigator(Navigator):
         self.angle = 0
         self.last_reserved_location = None
         self.multiagent = False
+        self.use_waypoints = False
+        self.orientation_fixing = False
         
         if (self.multiagent):
             # Create request server and response clients to communicate with waypoints_server
@@ -34,17 +36,22 @@ class MultiNavigator(Navigator):
         
     # Navigate to a goal location passing through a list of waypoints, always waiting until the next waypoint to be free
     def wayposeNavigation(self, wayposes):
-        for (point, orientation, goal_point) in wayposes:
-            self.reserveWaypoint(point)
-            #self.goToPose(point, orientation)
-            if (goal_point): # If we want the turtlebot to finish going to the goal
-                self.goToPose(point, orientation)
-            else:
-                self.publishGoal(point, orientation)
-                self.waitUntilCloseToGoal(point)
-            #raw_input("Go to " + str(point) + "...")
-            self.releaseWaypoint(self.last_reserved_location)
-            self.last_reserved_location = point
+        if (not self.use_waypoints):
+            (point, orientation, is_goal_point) = wayposes[-1]
+            self.goToPose(point, orientation)
+        else:
+            for (point, orientation, is_goal_point) in wayposes:
+                self.reserveWaypoint(point)
+                #self.goToPose(point, orientation)
+                if (is_goal_point): # If we want the turtlebot to finish going to the goal
+                    self.goToPose(point, orientation)
+                else:
+                    self.publishGoal(point, orientation)
+                    self.waitUntilCloseToGoal(point)
+                    self.fixOrientation(orientation)
+                #raw_input("Go to " + str(point) + "...")
+                self.releaseWaypoint(self.last_reserved_location)
+                self.last_reserved_location = point
         
     # Send message to the waypoints server to reserve next waypoint. Called right before publishing that waypoint as the next navigation goal.
     def reserveWaypoint(self, point):
@@ -88,6 +95,10 @@ class MultiNavigator(Navigator):
         orientation = Orientation(PoseWithCovarianceStamped.pose.pose.orientation.z, PoseWithCovarianceStamped.pose.pose.orientation.w)
         self.position = Point(x, y)
         self.angle = orientation.getTheta()
+        
+    def fixOrientation(self, orientation):
+        if (self.orientation_fixing):
+            pass
 
 
 if __name__=="__main__":

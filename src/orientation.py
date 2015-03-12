@@ -1,4 +1,4 @@
-
+ 
 
 import math
 
@@ -9,7 +9,7 @@ class Orientation:
         self.z = z
         self.w = w
 
-    # Gets the yaw angle from the quaternion describing the object's position
+    # Gets the yaw angle from the quaternion describing the object's position, -pi < angle < pi
     def getTheta(self):
         w = self.w
         z = self.z
