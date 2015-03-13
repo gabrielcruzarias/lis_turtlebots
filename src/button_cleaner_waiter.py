@@ -17,8 +17,8 @@ from SimpleServer import *
 from multinavigator import *
 from waiter_locations import *
 from BeerBotDomain import *
-from button_detector import detector
 
+from button_detector import detector, say
 
 class Waiter(MultiNavigator):
     kitchen_only = True
@@ -30,8 +30,7 @@ class Waiter(MultiNavigator):
     drink_orders_ports = {"donatello" : 12380, "leonardo" : 12381}
     MACROACTION_COMPLETED_MSG = "completed action"
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GET_DRINK", "leonardo" : "GET_DRINK"}, \
-        debug =True, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GET_DRINK", "leonardo" : "GET_DRINK"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
@@ -42,6 +41,7 @@ class Waiter(MultiNavigator):
         self.drinks_on_turtlebot = 0
         
         self.talk_to_pr2_server = SimpleServer(port = self.waiter_ports[name], threading = True)
+        pr2_host = "10.68.0.165" #"pr2mm1.csail.mit.edu"
         pr2_host = "pr2mm1.csail.mit.edu"
         #if (self.debug):
         #    pr2_host = "localhost"
@@ -59,8 +59,9 @@ class Waiter(MultiNavigator):
         
         self.drink_orders_turtle = SimpleServer(port = self.drink_orders_ports[name], threading = False)
         self.drink_orders_listener = SimpleClient(host = pr2_host, port = 12370 + int(name == "leonardo"))
-        self.detector = detector()
         
+	#XXX ARI
+	#self.d = detector()
 
     def eventLoop(self):
         rospy.loginfo("starting event loop! current action = " + self.action)
@@ -143,7 +144,7 @@ class Waiter(MultiNavigator):
     
     def goToRoom(self, room, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
-        rospy.loginfo("Going to " + room + "...")
+        rospy.loginfo("Going to room1...")
         if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
@@ -158,27 +159,28 @@ class Waiter(MultiNavigator):
             return
             
         holding = self.drinks_on_turtlebot
-        if holding:
-            num_drinks = 0
-            response= self.detector.detect_button_press("do you want the drink I am holding")
-            if response:
-                self.detector.say("I assume you took the drink")
-                holding = False
-                self.drinks_on_turtlebot = 0
-            else:
-                self.detector.say("you did not take the drink")
-                self.drinks_on_turtlebot = 1
-        else:
-            response = self.detector.detect_button_press("do you want to order a drink")
-            if response:
-                self.detector.say("I will get you a drink")
-                num_drinks = 1
-            else:
-                self.detector.say("you do not want a drink")
-                num_drinks = 0
-        """
         index = ["room1", "room2", "room3"].index(room)
         self.drink_orders_turtle.broadcast("at room," + str(index) + "," + str(self.drinks_on_turtlebot))
+
+	#XXX Ari adding changes here
+	"""
+	if self.drinks_on_turtlebot:
+		self.drinks_on_turtlebot = not self.d.detect_button_press("did you remove drink from cooler")	
+		num_drinks = 0
+		if self.drinks_on_turtlebot:
+			say("Thank you for removing the drink from the cooler")
+		else:
+			say("You did not remove drink from the cooler")
+
+	else: 
+		num_drinks = int(self.d.detect_button_press("would you like to order a drink"))
+		if num_drinks > 0:
+			say("you have successfully ordered a drink")
+		else:
+			say("you did not order a drink")
+	
+    
+	"""
         num_drinks = 0
         while (True):
             try:
@@ -188,16 +190,14 @@ class Waiter(MultiNavigator):
                 break
             except:
                 pass
-        """
+        
         print "Drinks ordered = " + str(num_drinks) + ", delivered " + str(holding - self.drinks_on_turtlebot) + " drinks"
-        raw_input("finish action")
-                
         #self.deliverDrinks()
         #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         #num_drinks = self.getOrders()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(num_drinks) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         
-        #self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
+        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
         
         return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
     
@@ -283,18 +283,16 @@ class Waiter(MultiNavigator):
             raw_input("Hit enter to leave PR2...")
             
         self.send_msg_to_pr2("turtle left pr2")
- 
+        
         if (not self.debug):
             self.wayposeNavigation(PATH_WAYPOSES[(self.location, "after_pr2")])
-        self.location = "after_pr2" 
-        #XXX we don't need to listen since we know where the pr2 is and what's it's doing
-        pr2_msg = "not_serving"
-        """
+        self.location = "after_pr2"
+        
         (pr2_msg, pr2_msg_extra) = self.listenToPR2().split(":")
         print (pr2_msg, pr2_msg_extra)
         if (pr2_msg_extra == " waiting_for_turtlebot"):
             pr2_msg = "drink_in_hand"
-        """
+        
         self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
         
         return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
