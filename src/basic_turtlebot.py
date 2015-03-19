@@ -13,7 +13,7 @@ from orientation import *
 
 
 class Turtlebot(object):
-    def __init__(self, debug = False, default_velocity = 0.3, default_angular_velocity = 1):
+    def __init__(self, debug = False, default_velocity = 0.3, default_angular_velocity = 1.15):
         self.debug = debug
         self.default_velocity = default_velocity
         self.default_angular_velocity = default_angular_velocity
