@@ -65,7 +65,7 @@ class Turtlebot(object):
     # Assumes the robot is facing the object and within ~1.5 meters of it
     def bumperApproach(self):
         start_t = time.time()
-        TIME_TO_FAIL = 15 # This might not have to be this big
+        TIME_TO_FAIL = 30 # This might not have to be this big
         self.found_object = False
         while (not self.found_object):
             if (time.time() - start_t > TIME_TO_FAIL):
