@@ -17,6 +17,8 @@ from SimpleServer import *
 from multinavigator import *
 from waiter_locations import *
 from BeerBotDomain import *
+from button_detector import detector
+
 
 class Waiter(MultiNavigator):
     kitchen_only = True
@@ -28,7 +30,8 @@ class Waiter(MultiNavigator):
     drink_orders_ports = {"donatello" : 12380, "leonardo" : 12381}
     MACROACTION_COMPLETED_MSG = "completed action"
     
-    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GET_DRINK", "leonardo" : "GET_DRINK"}, debug = False, default_velocity = 0.3, default_angular_velocity = 0.75):
+    def __init__(self, name, start_location = "kitchen", start_drinks_ordered = {"room1" : [], "room2" : [], "room3" : []}, start_action = {"donatello" : "GET_DRINK", "leonardo" : "GET_DRINK"}, \
+        debug =True, default_velocity = 0.3, default_angular_velocity = 0.75):
         MultiNavigator.__init__(self, name, debug, default_velocity, default_angular_velocity)
         #self.state = (location, drinks_ordered, drinks_on_turtlebot, state_of_pr2, state_of_other_turtlebot)
         
@@ -56,6 +59,7 @@ class Waiter(MultiNavigator):
         
         self.drink_orders_turtle = SimpleServer(port = self.drink_orders_ports[name], threading = False)
         self.drink_orders_listener = SimpleClient(host = pr2_host, port = 12370 + int(name == "leonardo"))
+        self.detector = detector()
         
 
     def eventLoop(self):
@@ -139,7 +143,7 @@ class Waiter(MultiNavigator):
     
     def goToRoom(self, room, ignore_drinks = False):
         # initial position = room1, room2, room3, kitchen, or pr2
-        rospy.loginfo("Going to room1...")
+        rospy.loginfo("Going to " + room + "...")
         if (not self.debug):
             if (self.location == "room1"):
                 self.turn(math.pi / 2)
@@ -154,6 +158,25 @@ class Waiter(MultiNavigator):
             return
             
         holding = self.drinks_on_turtlebot
+        if holding:
+            num_drinks = 0
+            response= self.detector.detect_button_press("do you want the drink I am holding")
+            if response:
+                self.detector.say("I assume you took the drink")
+                holding = False
+                self.drinks_on_turtlebot = 0
+            else:
+                self.detector.say("you did not take the drink")
+                self.drinks_on_turtlebot = 1
+        else:
+            response = self.detector.detect_button_press("do you want to order a drink")
+            if response:
+                self.detector.say("I will get you a drink")
+                num_drinks = 1
+            else:
+                self.detector.say("you do not want a drink")
+                num_drinks = 0
+        """
         index = ["room1", "room2", "room3"].index(room)
         self.drink_orders_turtle.broadcast("at room," + str(index) + "," + str(self.drinks_on_turtlebot))
         num_drinks = 0
@@ -165,15 +188,16 @@ class Waiter(MultiNavigator):
                 break
             except:
                 pass
-        
+        """
         print "Drinks ordered = " + str(num_drinks) + ", delivered " + str(holding - self.drinks_on_turtlebot) + " drinks"
+        #raw_input("finish action")
                 
         #self.deliverDrinks()
         #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         #num_drinks = self.getOrders()
         rospy.loginfo("STATE = (self.drinks_ordered = " + str(num_drinks) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
         
-        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
+        #self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
         
         return (self.LOCATION_MAPPING[self.location], num_drinks, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING["no_obs"])
     
@@ -214,7 +238,7 @@ class Waiter(MultiNavigator):
         if (pr2_msg_extra == " waiting_for_turtlebot"):
             pr2_msg = "drink_in_hand"
                 
-        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
+        #self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
         
         return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
     

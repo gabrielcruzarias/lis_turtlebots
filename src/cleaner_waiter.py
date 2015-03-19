@@ -190,7 +190,7 @@ class Waiter(MultiNavigator):
                 pass
         """
         print "Drinks ordered = " + str(num_drinks) + ", delivered " + str(holding - self.drinks_on_turtlebot) + " drinks"
-        raw_input("finish action")
+        #raw_input("finish action")
                 
         #self.deliverDrinks()
         #rospy.loginfo("STATE = (self.drinks_ordered = " + str(self.drinks_ordered) + " ; self.drinks_on_turtlebot = " + str(self.drinks_on_turtlebot))
@@ -238,7 +238,7 @@ class Waiter(MultiNavigator):
         if (pr2_msg_extra == " waiting_for_turtlebot"):
             pr2_msg = "drink_in_hand"
                 
-        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
+        #self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
         
         return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
     
@@ -295,7 +295,7 @@ class Waiter(MultiNavigator):
         if (pr2_msg_extra == " waiting_for_turtlebot"):
             pr2_msg = "drink_in_hand"
         """
-        self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
+        #self.drink_orders_turtle.broadcast(self.MACROACTION_COMPLETED_MSG)
         
         return (self.LOCATION_MAPPING[self.location], 0, self.drinks_on_turtlebot, self.PR2_MSG_MAPPING[pr2_msg])
         
